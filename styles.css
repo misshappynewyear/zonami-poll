@@ -485,6 +485,28 @@ textarea {
   color: #fff;
 }
 
+.creator-search-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  padding: 0;
+}
+
+.creator-search-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.creator-search-panel {
+  margin-bottom: 1rem;
+}
+
+.creator-search-panel input {
+  width: 100%;
+}
+
 .creator-list-shell {
   border: 2px solid #111;
   background: #fff;

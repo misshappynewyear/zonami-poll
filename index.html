@@ -161,6 +161,14 @@
             <button class="creator-filter" type="button" data-filter="Illustrator" data-i18n="filters.artists">Artists</button>
             <button class="creator-filter" type="button" data-filter="Influencers" data-i18n="filters.influencers">Influencers</button>
             <button class="creator-filter" type="button" data-filter="Writers" data-i18n="filters.writers">Writers</button>
+            <button class="creator-filter creator-search-toggle" type="button" id="creatorSearchToggle" aria-label="Search creators">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10.5 3a7.5 7.5 0 1 1 0 15a7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Zm7.61 11.2L22 20.09L20.09 22l-3.89-3.89l1.91-1.91Z" />
+              </svg>
+            </button>
+          </div>
+          <div class="creator-search-panel is-hidden" id="creatorSearchPanel">
+            <input id="creatorSearchInput" type="search" placeholder="Search by creator, link, or recommendation" />
           </div>
           <div class="creator-list-shell">
             <ul class="creator-list" id="creatorGrid"></ul>

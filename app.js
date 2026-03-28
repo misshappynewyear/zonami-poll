@@ -67,7 +67,7 @@ const translations = {
     withoutAt: 'Enter the creator name without "@".',
     sending: "Sending...",
     submitError: "Could not submit the suggestion.",
-    noCreators: "No creators found in this category yet.",
+    noCreators: "No creators found.",
     thankYou: "Thank you for suggesting {name}!",
     rule1: '<span class="rule-phase">Submission Phase</span><br /><br />Fans can submit their favorite creators in three categories, and each submission should include a link that shows the work that fits the category.<br /><br /><span class="rule-detail"><strong>Illustrators</strong>: fanart, illustrations, and drawings.</span><br /><span class="rule-detail"><strong>Writers</strong>: fanfics and other written ZoNami works.</span><br /><span class="rule-detail"><strong>Influencers</strong>: fans who actively share and support ZoNami across social media.</span><br /><br />You can suggest creators from Twitter, TikTok, Instagram, Tumblr, AO3, and other platforms.',
     rule2: '<span class="rule-phase">Review Phase</span><br /><br />The mods review every submission, check for duplicates, and approve the creators who should appear in the Creator Spotlight.',
@@ -128,7 +128,7 @@ const translations = {
     withoutAt: 'Saisissez le nom du createur sans "@".',
     sending: "Envoi...",
     submitError: "Impossible d'envoyer la suggestion.",
-    noCreators: "Aucun createur trouve dans cette categorie pour le moment.",
+    noCreators: "Aucun createur trouve.",
     thankYou: "Merci d'avoir propose {name} !",
     rule1: '<span class="rule-phase">Phase de soumission</span><br /><br />Les fans peuvent proposer leurs createurs favoris dans trois categories, et chaque suggestion doit inclure un lien montrant bien le travail correspondant a la categorie choisie.<br /><br /><span class="rule-detail"><strong>Illustrateurs</strong> : fanarts, illustrations et dessins.</span><br /><span class="rule-detail"><strong>Auteurs</strong> : fanfics et autres oeuvres ecrites ZoNami.</span><br /><span class="rule-detail"><strong>Influenceurs</strong> : fans qui partagent et soutiennent activement ZoNami sur les reseaux sociaux.</span><br /><br />Vous pouvez proposer des createurs venant de Twitter, TikTok, Instagram, Tumblr, AO3 et d\'autres plateformes.',
     rule2: '<span class="rule-phase">Phase de verification</span><br /><br />Les moderateurs examinent chaque suggestion, verifient les doublons et approuvent les createurs qui doivent apparaitre dans le Creator Spotlight.',
@@ -189,7 +189,7 @@ const translations = {
     withoutAt: 'Escribe el nombre del creador sin "@".',
     sending: "Enviando...",
     submitError: "No se pudo enviar la sugerencia.",
-    noCreators: "Todavía no hay creadores en esta categoría.",
+    noCreators: "No se encontraron creadores.",
     thankYou: "¡Gracias por sugerir a {name}!",
     rule1: '<span class="rule-phase">Fase de envío</span><br /><br />Los fans pueden proponer a sus creadores favoritos en tres categorías, y cada sugerencia debe incluir un enlace que muestre el trabajo que encaja con la categoría elegida.<br /><br /><span class="rule-detail"><strong>Ilustradores</strong>: fanart, ilustraciones y dibujos.</span><br /><span class="rule-detail"><strong>Escritores</strong>: fanfics y otros trabajos escritos de ZoNami.</span><br /><span class="rule-detail"><strong>Influencers</strong>: fans que comparten y apoyan activamente a ZoNami en redes sociales.</span><br /><br />Puedes sugerir creadores de Twitter, TikTok, Instagram, Tumblr, AO3 y otras plataformas.',
     rule2: '<span class="rule-phase">Fase de revisión</span><br /><br />Los mods revisan cada sugerencia, comprueban duplicados y aprueban a los creadores que deben aparecer en el Creator Spotlight.',
@@ -250,7 +250,7 @@ const translations = {
     withoutAt: 'Digite o nome do criador sem "@".',
     sending: "Enviando...",
     submitError: "Não foi possível enviar a sugestão.",
-    noCreators: "Ainda não há criadores nesta categoria.",
+    noCreators: "Nenhum criador encontrado.",
     thankYou: "Obrigado por sugerir {name}!",
     rule1: '<span class="rule-phase">Fase de envio</span><br /><br />Os fãs podem sugerir seus criadores favoritos em três categorias, e cada sugestão deve incluir um link que mostre o trabalho que combina com a categoria escolhida.<br /><br /><span class="rule-detail"><strong>Ilustradores</strong>: fanarts, ilustrações e desenhos.</span><br /><span class="rule-detail"><strong>Escritores</strong>: fanfics e outras obras escritas de ZoNami.</span><br /><span class="rule-detail"><strong>Influenciadores</strong>: fãs que compartilham e apoiam ZoNami ativamente nas redes sociais.</span><br /><br />Você pode sugerir criadores do Twitter, TikTok, Instagram, Tumblr, AO3 e outras plataformas.',
     rule2: '<span class="rule-phase">Fase de revisão</span><br /><br />A moderação revisa cada sugestão, verifica duplicatas e aprova os criadores que devem aparecer no Creator Spotlight.',
@@ -311,7 +311,7 @@ const translations = {
     withoutAt: 'クリエイター名は「@」なしで入力してください。',
     sending: "送信中...",
     submitError: "推薦を送信できませんでした。",
-    noCreators: "このカテゴリーにはまだクリエイターがいません。",
+    noCreators: "クリエイターが見つかりません。",
     thankYou: "{name} を推薦してくれてありがとう！",
     rule1: '<span class="rule-phase">推薦フェーズ</span><br /><br />ファンは3つのカテゴリーでお気に入りのクリエイターを推薦できます。各推薦には、選んだカテゴリーに合う作品が見られるリンクを含めてください。<br /><br /><span class="rule-detail"><strong>イラストレーター</strong>: ファンアート、イラスト、ドローイング。</span><br /><span class="rule-detail"><strong>ライター</strong>: ファンフィックやその他のZoNami文章作品。</span><br /><span class="rule-detail"><strong>インフルエンサー</strong>: SNSで積極的にZoNamiを広め、応援しているファン。</span><br /><br />Twitter、TikTok、Instagram、Tumblr、AO3など、さまざまなプラットフォームから推薦できます。',
     rule2: '<span class="rule-phase">審査フェーズ</span><br /><br />モデレーターがすべての推薦を確認し、重複をチェックしたうえで、Creator Spotlightに載せるクリエイターを承認します。',
@@ -372,7 +372,7 @@ const translations = {
     withoutAt: '请输入不带“@”的创作者名称。',
     sending: "提交中...",
     submitError: "无法提交推荐。",
-    noCreators: "这个类别下还没有创作者。",
+    noCreators: "未找到创作者。",
     thankYou: "感谢你推荐 {name}！",
     rule1: '<span class="rule-phase">提交阶段</span><br /><br />粉丝可以在三个类别中推荐自己喜欢的创作者，每条推荐都应附上一个能展示该类别作品的链接。<br /><br /><span class="rule-detail"><strong>画师</strong>：同人图、插画和绘画作品。</span><br /><span class="rule-detail"><strong>写手</strong>：同人文和其他 ZoNami 文字作品。</span><br /><span class="rule-detail"><strong>推广者</strong>：在社交媒体上积极分享并支持 ZoNami 的粉丝。</span><br /><br />你可以推荐来自 Twitter、TikTok、Instagram、Tumblr、AO3 等平台的创作者。',
     rule2: '<span class="rule-phase">审核阶段</span><br /><br />管理员会审核每一条推荐、检查重复项，并批准应该出现在 Creator Spotlight 中的创作者。',
@@ -433,7 +433,7 @@ const translations = {
     withoutAt: '크리에이터 이름은 "@" 없이 입력해 주세요.',
     sending: "보내는 중...",
     submitError: "추천을 제출할 수 없습니다.",
-    noCreators: "이 카테고리에는 아직 크리에이터가 없습니다.",
+    noCreators: "크리에이터를 찾을 수 없습니다.",
     thankYou: "{name} 님을 추천해 주셔서 감사합니다!",
     rule1: '<span class="rule-phase">추천 단계</span><br /><br />팬들은 세 가지 카테고리에서 좋아하는 크리에이터를 추천할 수 있으며, 각 추천에는 해당 카테고리에 맞는 작품을 보여 주는 링크가 포함되어야 합니다.<br /><br /><span class="rule-detail"><strong>일러스트레이터</strong>: 팬아트, 일러스트, 드로잉.</span><br /><span class="rule-detail"><strong>작가</strong>: 팬픽과 기타 ZoNami 글 작품.</span><br /><span class="rule-detail"><strong>인플루언서</strong>: 소셜 미디어에서 ZoNami를 적극적으로 공유하고 응원하는 팬들.</span><br /><br />Twitter, TikTok, Instagram, Tumblr, AO3 등 다양한 플랫폼의 크리에이터를 추천할 수 있습니다.',
     rule2: '<span class="rule-phase">검토 단계</span><br /><br />모더레이터가 모든 추천을 검토하고 중복을 확인한 뒤, Creator Spotlight에 올라갈 크리에이터를 승인합니다.',
@@ -494,7 +494,7 @@ const translations = {
     withoutAt: 'क्रिएटर का नाम "@" के बिना लिखें।',
     sending: "भेजा जा रहा है...",
     submitError: "सुझाव भेजा नहीं जा सका।",
-    noCreators: "इस श्रेणी में अभी कोई क्रिएटर नहीं मिला।",
+    noCreators: "कोई क्रिएटर नहीं मिला।",
     thankYou: "{name} को सुझाव देने के लिए धन्यवाद!",
     rule1: '<span class="rule-phase">सबमिशन चरण</span><br /><br />फैंस अपने पसंदीदा क्रिएटर्स को तीन श्रेणियों में सुझा सकते हैं, और हर सुझाव के साथ ऐसा लिंक होना चाहिए जो चुनी गई श्रेणी के मुताबिक उनके काम को दिखाए।<br /><br /><span class="rule-detail"><strong>इलस्ट्रेटर्स</strong>: फैनआर्ट, इलस्ट्रेशन और ड्रॉइंग्स.</span><br /><span class="rule-detail"><strong>राइटर्स</strong>: फैनफिक और अन्य लिखित ZoNami काम.</span><br /><span class="rule-detail"><strong>इन्फ्लुएंसर्स</strong>: वे फैंस जो सोशल मीडिया पर ZoNami को सक्रिय रूप से साझा और सपोर्ट करते हैं.</span><br /><br />आप Twitter, TikTok, Instagram, Tumblr, AO3 और अन्य प्लेटफ़ॉर्म्स से क्रिएटर्स सुझा सकते हैं।',
     rule2: '<span class="rule-phase">रिव्यू चरण</span><br /><br />मॉड्स हर सुझाव की समीक्षा करेंगे, डुप्लिकेट जाँचेंगे, और उन क्रिएटर्स को मंज़ूरी देंगे जो Creator Spotlight में दिखने चाहिए।',
@@ -555,7 +555,7 @@ const translations = {
     withoutAt: 'Inserisci il nome del creator senza "@".',
     sending: "Invio in corso...",
     submitError: "Impossibile inviare il suggerimento.",
-    noCreators: "Nessun creator trovato in questa categoria per ora.",
+    noCreators: "Nessun creator trovato.",
     thankYou: "Grazie per aver suggerito {name}!",
     rule1: '<span class="rule-phase">Fase di invio</span><br /><br />I fan possono proporre i loro creator preferiti in tre categorie, e ogni proposta deve includere un link che mostri il lavoro adatto alla categoria scelta.<br /><br /><span class="rule-detail"><strong>Illustratori</strong>: fanart, illustrazioni e disegni.</span><br /><span class="rule-detail"><strong>Scrittori</strong>: fanfiction e altri lavori scritti ZoNami.</span><br /><span class="rule-detail"><strong>Influencer</strong>: fan che condividono e supportano attivamente ZoNami sui social.</span><br /><br />Puoi suggerire creator da Twitter, TikTok, Instagram, Tumblr, AO3 e altre piattaforme.',
     rule2: '<span class="rule-phase">Fase di revisione</span><br /><br />I moderatori esaminano ogni proposta, controllano i duplicati e approvano i creator che dovrebbero apparire nel Creator Spotlight.',
@@ -616,7 +616,7 @@ const translations = {
     withoutAt: 'Masukkan nama kreator tanpa "@".',
     sending: "Mengirim...",
     submitError: "Pengajuan tidak dapat dikirim.",
-    noCreators: "Belum ada kreator di kategori ini.",
+    noCreators: "Tidak ada kreator yang ditemukan.",
     thankYou: "Terima kasih sudah mengajukan {name}!",
     rule1: '<span class="rule-phase">Fase pengajuan</span><br /><br />Fans bisa mengajukan kreator favorit mereka dalam tiga kategori, dan setiap pengajuan harus menyertakan tautan yang menunjukkan karya yang sesuai dengan kategori tersebut.<br /><br /><span class="rule-detail"><strong>Ilustrator</strong>: fanart, ilustrasi, dan gambar.</span><br /><span class="rule-detail"><strong>Penulis</strong>: fanfic dan karya tulis ZoNami lainnya.</span><br /><span class="rule-detail"><strong>Influencer</strong>: fans yang aktif membagikan dan mendukung ZoNami di media sosial.</span><br /><br />Kamu bisa mengajukan kreator dari Twitter, TikTok, Instagram, Tumblr, AO3, dan platform lainnya.',
     rule2: '<span class="rule-phase">Fase peninjauan</span><br /><br />Para mod meninjau setiap pengajuan, memeriksa duplikat, dan menyetujui kreator yang harus tampil di Creator Spotlight.',
@@ -677,7 +677,7 @@ const translations = {
     withoutAt: 'أدخل اسم صانع المحتوى من دون "@".',
     sending: "جارٍ الإرسال...",
     submitError: "تعذر إرسال الترشيح.",
-    noCreators: "لا يوجد مبدعون في هذه الفئة حتى الآن.",
+    noCreators: "لم يتم العثور على أي مبدعين.",
     thankYou: "شكرًا لترشيحك {name}!",
     rule1: '<span class="rule-phase">مرحلة الترشيح</span><br /><br />يمكن للجمهور ترشيح صناع المحتوى المفضلين لديهم ضمن ثلاث فئات، ويجب أن يتضمن كل ترشيح رابطًا يُظهر العمل المناسب للفئة المختارة.<br /><br /><span class="rule-detail"><strong>الرسامون</strong>: فن المعجبين والرسومات واللوحات.</span><br /><span class="rule-detail"><strong>الكتّاب</strong>: الفانفيك وغيرها من الأعمال الكتابية الخاصة بـ ZoNami.</span><br /><span class="rule-detail"><strong>المؤثرون</strong>: المعجبون الذين يشاركون ويدعمون ZoNami بنشاط عبر وسائل التواصل الاجتماعي.</span><br /><br />يمكنك ترشيح مبدعين من Twitter وTikTok وInstagram وTumblr وAO3 ومنصات أخرى.',
     rule2: '<span class="rule-phase">مرحلة المراجعة</span><br /><br />يراجع المشرفون كل ترشيح، ويتحققون من التكرار، ويعتمدون المبدعين الذين يجب أن يظهروا في Creator Spotlight.',
@@ -714,6 +714,9 @@ const creatorPagination = document.getElementById("creatorPagination");
 const creatorPrevButton = document.getElementById("creatorPrevButton");
 const creatorNextButton = document.getElementById("creatorNextButton");
 const creatorPageStatus = document.getElementById("creatorPageStatus");
+const creatorSearchToggle = document.getElementById("creatorSearchToggle");
+const creatorSearchPanel = document.getElementById("creatorSearchPanel");
+const creatorSearchInput = document.getElementById("creatorSearchInput");
 const languageSelect = document.getElementById("languageSelect");
 
 let state = loadState();
@@ -722,6 +725,7 @@ let showcaseSelection = [];
 let showcaseTimerStarted = false;
 let activeCreatorFilter = "slideshow";
 let creatorPage = 0;
+let creatorSearchQuery = "";
 const CREATORS_PER_PAGE = 5;
 const RANDOM_CREATORS_PER_VIEW = 3;
 
@@ -925,22 +929,38 @@ function showcasedCreators() {
   return showcaseSelection;
 }
 
+function searchResults() {
+  const query = creatorSearchQuery.trim().toLowerCase();
+  if (!query) return [];
+  return sortedCreators().filter((creator) =>
+    [creator.name, creator.region, creator.pitch].some((value) =>
+      String(value || "").toLowerCase().includes(query)
+    )
+  );
+}
+
 function visibleCreators() {
-  const creators = sortedCreators();
-  if (activeCreatorFilter === "slideshow") return showcasedCreators();
-  const filtered = creators.filter((creator) => creator.platform === activeCreatorFilter);
+  let filtered;
+  if (creatorSearchQuery.trim()) {
+    filtered = searchResults();
+  } else {
+    const creators = sortedCreators();
+    if (activeCreatorFilter === "slideshow") return showcasedCreators();
+    filtered = creators.filter((creator) => creator.platform === activeCreatorFilter);
+  }
   const start = creatorPage * CREATORS_PER_PAGE;
   return filtered.slice(start, start + CREATORS_PER_PAGE);
 }
 
 function filteredCreatorsCount() {
+  if (creatorSearchQuery.trim()) return searchResults().length;
   if (activeCreatorFilter === "slideshow") return sortedCreators().length;
   return sortedCreators().filter((creator) => creator.platform === activeCreatorFilter).length;
 }
 
 function renderCreatorPagination() {
   if (!creatorPagination || !creatorPrevButton || !creatorNextButton || !creatorPageStatus) return;
-  if (activeCreatorFilter === "slideshow") {
+  if (activeCreatorFilter === "slideshow" && !creatorSearchQuery.trim()) {
     creatorPagination.classList.add("is-inactive");
     return;
   }
@@ -1118,11 +1138,42 @@ suggestAgainButton?.addEventListener("click", () => {
 creatorFilters.forEach((button) => {
   button.addEventListener("click", () => {
     activeCreatorFilter = button.dataset.filter;
+    creatorSearchQuery = "";
+    if (creatorSearchInput) creatorSearchInput.value = "";
+    creatorSearchPanel?.classList.add("is-hidden");
+    creatorSearchToggle?.classList.remove("is-active");
     creatorPage = 0;
     if (activeCreatorFilter === "slideshow") refreshShowcaseSelection();
     creatorFilters.forEach((item) => item.classList.toggle("is-active", item === button));
     renderCreators();
   });
+});
+
+creatorSearchToggle?.addEventListener("click", () => {
+  const isOpen = !creatorSearchPanel.classList.contains("is-hidden");
+  if (!isOpen) {
+    creatorSearchPanel.classList.remove("is-hidden");
+    creatorSearchToggle.classList.add("is-active");
+    creatorSearchInput?.focus();
+    return;
+  }
+
+  creatorSearchPanel.classList.add("is-hidden");
+  creatorSearchToggle.classList.remove("is-active");
+  creatorSearchQuery = "";
+  if (creatorSearchInput) creatorSearchInput.value = "";
+  activeCreatorFilter = "slideshow";
+  creatorFilters.forEach((item) => item.classList.toggle("is-active", item.dataset.filter === "slideshow"));
+  refreshShowcaseSelection();
+  creatorPage = 0;
+  renderCreators();
+});
+
+creatorSearchInput?.addEventListener("input", (event) => {
+  creatorSearchQuery = event.target.value || "";
+  creatorPage = 0;
+  creatorSearchToggle?.classList.toggle("is-active", Boolean(creatorSearchQuery.trim()));
+  renderCreators();
 });
 
 creatorPrevButton?.addEventListener("click", () => {
