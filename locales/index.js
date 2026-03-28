@@ -1,0 +1,1 @@
+﻿window.VOTE_PAGE_LOCALES = window.VOTE_PAGE_LOCALES || {};
