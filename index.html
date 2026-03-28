@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZoNami Creator World Vote</title>
+    <meta
+      name="description"
+      content="A fan voting experience for ZoNami content creators, inspired by the WT100 event aesthetic."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/webp" href="./img/logo.webp" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell" id="home">
+      <header class="topbar">
+        <a class="topbar-logo" href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener">
+          <span class="logo-micro">Zonami Discord Server</span>
+          <strong>ZN CONTENT CREATOR AWARDS</strong>
+        </a>
+      </header>
+
+      <main class="poster">
+        <section class="hero-frame">
+          <div class="hero-collage">
+            <div class="hero-masthead">
+              <p class="hero-kicker">
+                <a href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener">
+                  Zonami Discord Server
+                </a>
+              </p>
+              <h1>ZN CONTENT CREATOR</h1>
+            </div>
+
+            <div class="hero-character">
+              <a href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener">
+                <img class="hero-logo" src="./img/logo.webp" alt="Zonami Discord Server logo" />
+              </a>
+            </div>
+
+            <a class="cta-ribbon" href="#participate" data-action-label>Suggest Now</a>
+          </div>
+
+          <section class="count-panel">
+            <p class="count-mark">Current Vote Count</p>
+            <div class="count-line">
+              <span class="count-sigil">v</span>
+              <strong id="voteCounter">00,000,000</strong>
+            </div>
+            <p class="count-subline">
+              Proposed creators:
+              <span id="creatorCounter">00</span>
+            </p>
+          </section>
+        </section>
+
+        <section class="paper-card intro-card" id="about">
+          <div class="crest" aria-label="Zona Podcast"></div>
+          <h2>Who Is Your<br />Favorite ZoNami Creator</h2>
+          <p>
+            This version is for real people voting on ZoNami content creators.
+            First the page collects suggestions from the community. After that,
+            voting opens for the approved lineup.
+          </p>
+          <p id="phaseDescription">
+            Submit your favorite creators so they can enter the official vote.
+          </p>
+        </section>
+
+        <section class="paper-card participate-card" id="participate">
+          <div class="section-band">
+            <span>Join The Event</span>
+            <h2 id="phaseTitle">Suggestion Period</h2>
+          </div>
+
+          <div class="mode-panel" data-mode="suggest" id="suggestionPanel">
+            <form class="entry-form" id="suggestionForm">
+              <label>
+                Creator name
+                <input type="text" name="name" placeholder="ZoNamiLover" required pattern="^[^@].*$" />
+              </label>
+              <label>
+                Category
+                <select name="platform" required>
+                  <option value="">Select a category</option>
+                  <option value="Illustrator">Illustrator</option>
+                  <option value="Influencers">Influencers</option>
+                  <option value="Writers">Writers</option>
+                </select>
+              </label>
+              <label>
+                Link
+                <input type="url" name="region" placeholder="https://example.com/profile" required />
+              </label>
+              <label>
+                Why should they be included?
+                <textarea
+                  name="pitch"
+                  rows="4"
+                  placeholder="Explain what makes this creator special to ZoNami fans."
+                  required
+                ></textarea>
+              </label>
+              <button class="form-button" type="submit">Submit Suggestion</button>
+            </form>
+
+            <div class="loading-panel is-hidden" id="loadingPanel" aria-live="polite">
+              <p class="loading-kicker">Submitting</p>
+              <h3>Sending your suggestion...</h3>
+              <p class="loading-copy">Please wait while we save it for the mods to review.</p>
+            </div>
+
+            <div class="success-panel is-hidden" id="successPanel" aria-live="polite">
+              <p class="success-kicker">Suggestion Received</p>
+              <h3 id="successTitle">Thank you for suggesting this creator!</h3>
+              <p class="success-copy">The mods will review your vote.</p>
+              <button class="form-button" type="button" id="suggestAgainButton">Suggest Again</button>
+            </div>
+          </div>
+
+          <div class="mode-panel is-hidden" data-mode="vote">
+            <form class="search-form">
+              <label>
+                Search creators
+                <input id="creatorSearch" type="search" placeholder="Search by creator or platform" />
+              </label>
+            </form>
+            <p class="vote-note">
+              In this demo, votes are stored locally in the browser with
+              <code>localStorage</code>.
+            </p>
+          </div>
+
+          <p class="feedback" id="feedbackMessage" aria-live="polite"></p>
+        </section>
+
+        <section class="paper-card creator-card-shell" id="hot">
+          <div class="section-band">
+            <span>Creator Ranking</span>
+            <h2 id="participateTitle">Suggested Creators</h2>
+          </div>
+          <div class="creator-filters" aria-label="Creator filters">
+            <button class="creator-filter is-active" type="button" data-filter="slideshow">Slideshow</button>
+            <button class="creator-filter" type="button" data-filter="Illustrator">Artists</button>
+            <button class="creator-filter" type="button" data-filter="Influencers">Influencers</button>
+            <button class="creator-filter" type="button" data-filter="Writers">Writers</button>
+          </div>
+          <div class="creator-list-shell">
+            <ul class="creator-list" id="creatorGrid"></ul>
+          </div>
+        </section>
+
+        <section class="paper-card rules-card" id="rules">
+          <div class="section-band">
+            <span>Rules</span>
+            <h2>How Participation Works</h2>
+          </div>
+          <ul class="rule-list" id="ruleList"></ul>
+        </section>
+
+        <section class="paper-card rewards-card" id="rewards">
+          <div class="section-band">
+            <span>Event Highlights</span>
+            <h2>Fan Campaign Features</h2>
+          </div>
+          <div class="reward-cards">
+            <article>
+              <h3>Suggestion Stage</h3>
+              <p>Fans can build the ballot by proposing creators before voting opens.</p>
+            </article>
+            <article>
+              <h3>Daily Voting</h3>
+              <p>Once voting starts, supporters can return and push their favorites higher.</p>
+            </article>
+            <article>
+              <h3>Ranking Reveal</h3>
+              <p>The final result can be presented as a Top 100 celebration page.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="creatorCardTemplate">
+      <li class="creator-card">
+        <div class="creator-body">
+          <p class="creator-category"></p>
+          <h3 class="creator-name"></h3>
+          <p class="creator-link"></p>
+          <p class="creator-pitch"></p>
+        </div>
+      </li>
+    </template>
+
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
