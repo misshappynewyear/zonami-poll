@@ -5,6 +5,7 @@ const SHEET_NAMES = {
 
 const APPROVAL_DEFAULT = "not approved";
 const ALLOWED_CATEGORIES = ["Illustrator", "Influencers", "Writers"];
+const DISCORD_WEBHOOK_PROPERTY = "DISCORD_WEBHOOK_URL";
 
 function doPost(e) {
   try {
@@ -34,6 +35,19 @@ function doPost(e) {
       metadataJson,
       "",
     ]);
+
+    const rowNumber = sheet.getLastRow();
+
+    const webhookResult = sendDiscordSuggestionAlert_({
+      submissionId,
+      timestamp,
+      creator_name: data.creator_name,
+      category: data.category,
+      link: data.link,
+      reason: data.reason,
+    });
+
+    sheet.getRange(rowNumber, 11).setValue(webhookResult);
 
     return jsonResponse_({
       ok: true,
@@ -205,6 +219,59 @@ function debugEvent_(e) {
   };
 }
 
+function sendDiscordSuggestionAlert_(suggestion) {
+  const webhookUrl = PropertiesService.getScriptProperties().getProperty(DISCORD_WEBHOOK_PROPERTY);
+  if (!webhookUrl) {
+    Logger.log("Discord webhook not configured.");
+    return "webhook:not_configured";
+  }
+
+  const message = {
+    content: "New suggestion for review.",
+    embeds: [
+      {
+        title: suggestion.creator_name,
+        description: "A new creator suggestion was submitted from the public page.",
+        color: 0xef7d1a,
+        fields: [
+          { name: "Category", value: suggestion.category || "-", inline: true },
+          { name: "Submission ID", value: suggestion.submissionId || "-", inline: true },
+          { name: "Profile Link", value: suggestion.link || "-", inline: false },
+          { name: "Why Included", value: truncateForDiscord_(suggestion.reason, 1000), inline: false },
+        ],
+        footer: {
+          text: "ZoNami Suggestions",
+        },
+        timestamp: new Date(suggestion.timestamp).toISOString(),
+      },
+    ],
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(webhookUrl, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(message),
+      muteHttpExceptions: true,
+    });
+    Logger.log("Discord webhook status: %s", response.getResponseCode());
+    return `webhook:${response.getResponseCode()}`;
+  } catch (error) {
+    Logger.log("Discord webhook failed: %s", error.message || error);
+    return `webhook:failed:${error.message || error}`;
+  }
+}
+
+function truncateForDiscord_(value, maxLength) {
+  const text = cleanString_(value);
+  if (text.length <= maxLength) {
+    return text || "-";
+  }
+
+  return `${text.slice(0, maxLength - 1)}...`;
+}
+
+
 function getApprovedCreators_() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.approved);
   if (!sheet) {
@@ -237,4 +304,11 @@ function getApprovedCreators_() {
     ok: true,
     creators,
   });
+}
+
+function testDiscordAuth() {
+  return UrlFetchApp.fetch("https://discord.com", {
+    method: "get",
+    muteHttpExceptions: true,
+  }).getResponseCode();
 }
