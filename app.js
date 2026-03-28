@@ -1,5 +1,5 @@
-﻿const STORAGE_KEY = "one-piece-creator-vote-demo";
-const LANGUAGE_STORAGE_KEY = "vote-page-language";
+﻿const BROWSER_TOKEN_STORAGE_KEY = "ZNCCA-bt";
+const LANGUAGE_STORAGE_KEY = "ZNCCA-lang";
 const SUBMISSION_ENDPOINT = window.VOTE_PAGE_CONFIG?.submissionEndpoint ?? "";
 const APPROVED_ENDPOINT = SUBMISSION_ENDPOINT ? `${SUBMISSION_ENDPOINT}?action=approved` : "";
 const LANGUAGE_CODES = ["en", "es", "fr", "pt", "ja", "zh", "ko", "hi", "it", "id", "vi", "tl", "ar"];
@@ -137,11 +137,10 @@ function categoryLabel(value) {
 }
 
 function getBrowserToken() {
-  const tokenKey = `${STORAGE_KEY}-browser-token`;
-  const existing = localStorage.getItem(tokenKey);
+  const existing = localStorage.getItem(BROWSER_TOKEN_STORAGE_KEY);
   if (existing) return existing;
   const created = crypto.randomUUID();
-  localStorage.setItem(tokenKey, created);
+  localStorage.setItem(BROWSER_TOKEN_STORAGE_KEY, created);
   return created;
 }
 
@@ -173,21 +172,11 @@ function normalizeCreatorEntry(entry) {
 }
 
 function loadState() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return { creators: seedCreators.map(normalizeCreatorEntry), submissions: [] };
-  try {
-    const parsed = JSON.parse(raw);
-    return {
-      creators: Array.isArray(parsed.creators) && parsed.creators.length ? parsed.creators.map(normalizeCreatorEntry) : seedCreators.map(normalizeCreatorEntry),
-      submissions: Array.isArray(parsed.submissions) ? parsed.submissions.map(normalizeCreatorEntry) : [],
-    };
-  } catch {
-    return { creators: seedCreators.map(normalizeCreatorEntry), submissions: [] };
-  }
+  return { creators: seedCreators.map(normalizeCreatorEntry) };
 }
 
 function saveState() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  return;
 }
 
 function setFeedback(message, type = "") {
@@ -230,7 +219,7 @@ function validateCreatorNameField() {
 }
 
 function getAllCreators() {
-  return [...state.creators, ...state.submissions];
+  return [...state.creators];
 }
 
 function sortedCreators() {
@@ -394,9 +383,7 @@ async function hydrateApprovedCreators() {
   if (!APPROVED_ENDPOINT) return;
   try {
     state.creators = await loadApprovedCreatorsFromBackend();
-    state.submissions = [];
     refreshShowcaseSelection();
-    saveState();
     renderCounters();
     renderCreators();
   } catch {}
@@ -437,13 +424,8 @@ suggestionForm.addEventListener("submit", async (event) => {
   showSuggestionLoading();
   try {
     await submitSuggestionToBackend({ creator_name: name, category: platform, link: region, reason: pitch, metadata: buildSubmissionMetadata() });
-    state.submissions.unshift(normalizeCreatorEntry({ id: crypto.randomUUID(), name, platform, region, pitch }));
     suggestionForm.reset();
-    refreshShowcaseSelection();
-    saveState();
     setFeedback("", "");
-    renderCounters();
-    renderCreators();
     showSuggestionSuccess(name);
   } catch (error) {
     showSuggestionForm();
