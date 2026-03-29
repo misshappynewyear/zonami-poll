@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.hi = {
     phaseDescription: "अपने पसंदीदा क्रिएटर को सुझाएँ ताकि हम उन्हें कम्युनिटी सेलिब्रेशन में स्पॉटलाइट दे सकें।",
     joinEvent: "इवेंट में शामिल हों",
     suggestionPeriod: "सुझाव चरण",
+    shareVoteText: "मैंने ZoNa Nakama Discord Server Favorite Creator Award में अपने पसंदीदा {category} {name} को वोट दिया।",
     creatorName: "क्रिएटर का नाम",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "श्रेणी",

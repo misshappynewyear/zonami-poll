@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.id = {
     phaseDescription: "Ajukan kreator favoritmu agar kami bisa menyorot mereka dalam perayaan komunitas ini.",
     joinEvent: "Ikut acara",
     suggestionPeriod: "Masa pengajuan",
+    shareVoteText: "Aku memilih {name} sebagai {category} favoritku di ZoNa Nakama Discord Server Favorite Creator Award.",
     creatorName: "Nama kreator",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "Kategori",

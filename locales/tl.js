@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.tl = {
     phaseDescription: "Ibahagi ang paborito mong creator para mabigyan namin sila ng spotlight sa community celebration.",
     joinEvent: "Sumali sa event",
     suggestionPeriod: "Panahon ng mungkahi",
+    shareVoteText: "Binoto ko ang paborito kong {category} na si {name} sa ZoNa Nakama Discord Server Favorite Creator Award.",
     creatorName: "Pangalan ng creator",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "Kategorya",

@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.zh = {
     phaseDescription: "推荐你最喜欢的创作者，让他们在社区庆典中获得聚光灯。",
     joinEvent: "加入活动",
     suggestionPeriod: "推荐阶段",
+    shareVoteText: "我在 ZoNa Nakama Discord Server Favorite Creator Award 中，把票投给了我最喜欢的{category}{name}。",
     creatorName: "创作者名称",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "类别",

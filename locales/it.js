@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.it = {
     phaseDescription: "Suggerisci il tuo creator preferito così potremo metterlo in evidenza nella celebrazione della community.",
     joinEvent: "Partecipa all’evento",
     suggestionPeriod: "Periodo dei suggerimenti",
+    shareVoteText: "Ho votato per il mio {category} preferito {name} nei Favorite Creator Awards del server Discord ZoNa Nakama.",
     creatorName: "Nome del creator",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "Categoria",

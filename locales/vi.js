@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.vi = {
     phaseDescription: "Hãy đề cử creator bạn yêu thích để chúng tôi có thể đưa họ vào phần spotlight của cộng đồng.",
     joinEvent: "Tham gia sự kiện",
     suggestionPeriod: "Giai đoạn đề cử",
+    shareVoteText: "Tôi đã bình chọn cho {name}, {category} yêu thích của tôi, tại ZoNa Nakama Discord Server Favorite Creator Award.",
     creatorName: "Tên creator",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "Danh mục",

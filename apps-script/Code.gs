@@ -1,65 +1,129 @@
 const SHEET_NAMES = {
   suggestions: "suggestions_private",
   approved: "approved_public",
+  votes: "votes_private",
 };
 
 const APPROVAL_DEFAULT = "not approved";
+const COUNTED_DEFAULT = "yes";
 const ALLOWED_CATEGORIES = ["Illustrator", "Influencers", "Writers"];
 const DISCORD_WEBHOOK_PROPERTY = "DISCORD_WEBHOOK_URL";
+const ALLOWED_SUGGESTION_FIELDS = ["creator_name", "category", "link", "reason", "metadata_json"];
+const ALLOWED_VOTE_FIELDS = ["action", "creator_id", "category", "metadata_json"];
 
 function doPost(e) {
   try {
     Logger.log("doPost received: %s", JSON.stringify(debugEvent_(e)));
     const data = parseRequestBody_(e);
     Logger.log("parsed payload: %s", JSON.stringify(data));
-    validateSuggestionPayload_(data);
 
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.suggestions);
-    if (!sheet) {
-      throw new Error(`Missing sheet: ${SHEET_NAMES.suggestions}`);
+    if (data.action === "vote") {
+      return handleVoteSubmit_(data);
     }
 
-    const submissionId = createSubmissionId_();
-    const timestamp = new Date();
-    const metadataJson = JSON.stringify(buildMetadata_(data));
-
-    sheet.appendRow([
-      submissionId,
-      timestamp,
-      data.creator_name,
-      data.category,
-      data.link,
-      data.reason,
-      APPROVAL_DEFAULT,
-      "",
-      metadataJson,
-      "",
-    ]);
-
-    const rowNumber = sheet.getLastRow();
-
-    const webhookResult = sendDiscordSuggestionAlert_({
-      submissionId,
-      timestamp,
-      creator_name: data.creator_name,
-      category: data.category,
-      link: data.link,
-      reason: data.reason,
-    });
-
-    sheet.getRange(rowNumber, 11).setValue(webhookResult);
-
-    return jsonResponse_({
-      ok: true,
-      submission_id: submissionId,
-      message: "Suggestion saved.",
-    });
+    return handleSuggestionSubmit_(data);
   } catch (error) {
     return jsonResponse_({
       ok: false,
       message: error.message || "Unexpected error.",
     });
   }
+}
+
+function handleSuggestionSubmit_(data) {
+  validateSuggestionPayload_(data);
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.suggestions);
+  if (!sheet) {
+    throw new Error(`Missing sheet: ${SHEET_NAMES.suggestions}`);
+  }
+
+  const submissionId = createSubmissionId_();
+  const timestamp = new Date();
+  const metadataJson = JSON.stringify(buildMetadata_(data, "suggestion"));
+
+  sheet.appendRow([
+    submissionId,
+    timestamp,
+    data.creator_name,
+    data.category,
+    data.link,
+    data.reason,
+    APPROVAL_DEFAULT,
+    "",
+    metadataJson,
+    "",
+  ]);
+
+  const rowNumber = sheet.getLastRow();
+
+  const webhookResult = sendDiscordSuggestionAlert_({
+    submissionId,
+    timestamp,
+    creator_name: data.creator_name,
+    category: data.category,
+    link: data.link,
+    reason: data.reason,
+  });
+
+  sheet.getRange(rowNumber, 11).setValue(webhookResult);
+
+  return jsonResponse_({
+    ok: true,
+    submission_id: submissionId,
+    message: "Suggestion saved.",
+  });
+}
+
+function handleVoteSubmit_(data) {
+  validateVotePayload_(data);
+
+  const votesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.votes);
+  if (!votesSheet) {
+    throw new Error(`Missing sheet: ${SHEET_NAMES.votes}`);
+  }
+
+  const approvedCreator = getApprovedCreatorById_(data.creator_id);
+  if (!approvedCreator) {
+    throw new Error("Creator ID is invalid.");
+  }
+
+  if (data.category && data.category !== approvedCreator.category) {
+    throw new Error("Category does not match the approved creator.");
+  }
+
+  const metadata = buildMetadata_(data, "vote");
+  if (!metadata.browser_token) {
+    throw new Error("Missing browser token.");
+  }
+
+  const voteDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
+  if (hasExistingVoteForDate_(votesSheet, metadata.browser_token, voteDate)) {
+    throw new Error("You already voted today.");
+  }
+
+  const voteId = createVoteId_();
+  const timestamp = new Date();
+  const metadataJson = JSON.stringify(metadata);
+
+  votesSheet.appendRow([
+    voteId,
+    timestamp,
+    approvedCreator.creator_id,
+    approvedCreator.creator_name,
+    approvedCreator.category,
+    metadata.browser_token,
+    voteDate,
+    COUNTED_DEFAULT,
+    metadataJson,
+    "",
+  ]);
+
+  return jsonResponse_({
+    ok: true,
+    vote_id: voteId,
+    message: "Vote saved.",
+  });
 }
 
 function doGet(e) {
@@ -83,6 +147,7 @@ function parseRequestBody_(e) {
 
   if (e.parameter && Object.keys(e.parameter).length) {
     Logger.log("parseRequestBody_: using e.parameter");
+    validateAllowedFields_(Object.keys(e.parameter), ALLOWED_VOTE_FIELDS.concat(ALLOWED_SUGGESTION_FIELDS));
     let metadata = {};
     if (e.parameter.metadata_json) {
       try {
@@ -93,6 +158,8 @@ function parseRequestBody_(e) {
     }
 
     return {
+      action: cleanString_(e.parameter.action, 40),
+      creator_id: cleanString_(e.parameter.creator_id, 120),
       creator_name: cleanString_(e.parameter.creator_name),
       category: cleanString_(e.parameter.category),
       link: cleanString_(e.parameter.link),
@@ -127,7 +194,11 @@ function parseRequestBody_(e) {
       }
     }
 
+    validateAllowedFields_(Object.keys(params), ALLOWED_VOTE_FIELDS.concat(ALLOWED_SUGGESTION_FIELDS));
+
     return {
+      action: cleanString_(params.action, 40),
+      creator_id: cleanString_(params.creator_id, 120),
       creator_name: cleanString_(params.creator_name),
       category: cleanString_(params.category),
       link: cleanString_(params.link),
@@ -144,7 +215,11 @@ function parseRequestBody_(e) {
     throw new Error("Request body must be valid JSON.");
   }
 
+  validateAllowedFields_(Object.keys(parsed || {}), ALLOWED_VOTE_FIELDS.concat(["metadata"]).concat(["creator_name", "category", "link", "reason"]));
+
   return {
+    action: cleanString_(parsed.action, 40),
+    creator_id: cleanString_(parsed.creator_id, 120),
     creator_name: cleanString_(parsed.creator_name),
     category: cleanString_(parsed.category),
     link: cleanString_(parsed.link),
@@ -171,7 +246,17 @@ function validateSuggestionPayload_(data) {
   }
 }
 
-function buildMetadata_(data) {
+function validateVotePayload_(data) {
+  if (!data.creator_id || !/^sub_[a-z0-9]{16}$/i.test(data.creator_id)) {
+    throw new Error("Creator ID is required and must be valid.");
+  }
+
+  if (data.category && !ALLOWED_CATEGORIES.includes(data.category)) {
+    throw new Error("Category is invalid.");
+  }
+}
+
+function buildMetadata_(data, pageType) {
   const input = data.metadata || {};
 
   return {
@@ -182,12 +267,23 @@ function buildMetadata_(data) {
     screen: cleanString_(input.screen, 80),
     referrer: cleanString_(input.referrer, 500),
     submitted_at_client: cleanString_(input.submitted_at_client, 120),
-    page: "suggestion",
+    page: cleanString_(pageType, 40) || "suggestion",
   };
 }
 
 function createSubmissionId_() {
   return `sub_${Utilities.getUuid().replace(/-/g, "").slice(0, 16)}`;
+}
+
+function createVoteId_() {
+  return `vote_${Utilities.getUuid().replace(/-/g, "").slice(0, 16)}`;
+}
+
+function validateAllowedFields_(keys, allowedFields) {
+  const invalidKeys = (keys || []).filter((key) => allowedFields.indexOf(key) === -1);
+  if (invalidKeys.length) {
+    throw new Error(`Unexpected fields: ${invalidKeys.join(", ")}`);
+  }
 }
 
 function cleanString_(value, maxLength) {
@@ -304,6 +400,51 @@ function getApprovedCreators_() {
     ok: true,
     creators,
   });
+}
+
+function getApprovedCreatorById_(creatorId) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.approved);
+  if (!sheet) {
+    throw new Error(`Missing sheet: ${SHEET_NAMES.approved}`);
+  }
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return null;
+  }
+
+  const values = sheet.getRange(2, 1, lastRow - 1, 5).getValues();
+  for (let index = 0; index < values.length; index += 1) {
+    const row = values[index];
+    if (cleanString_(row[0]) !== creatorId) continue;
+    return {
+      creator_id: cleanString_(row[0]),
+      creator_name: cleanString_(row[1]),
+      category: cleanString_(row[2]),
+      link: cleanString_(row[3]),
+      reason: cleanString_(row[4]),
+    };
+  }
+
+  return null;
+}
+
+function hasExistingVoteForDate_(sheet, browserToken, voteDate) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return false;
+  }
+
+  const values = sheet.getRange(2, 6, lastRow - 1, 2).getValues();
+  for (let index = 0; index < values.length; index += 1) {
+    const rowBrowserToken = cleanString_(values[index][0], 200);
+    const rowVoteDate = cleanString_(values[index][1], 20);
+    if (rowBrowserToken === browserToken && rowVoteDate === voteDate) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function testDiscordAuth() {

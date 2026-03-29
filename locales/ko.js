@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.ko = {
     phaseDescription: "좋아하는 크리에이터를 추천해서 커뮤니티 축하 페이지에서 스포트라이트를 받을 수 있게 해 주세요.",
     joinEvent: "이벤트 참여하기",
     suggestionPeriod: "추천 기간",
+    shareVoteText: "ZoNa Nakama Discord Server Favorite Creator Award에서 내가 가장 좋아하는 {category} {name}에게 투표했어요.",
     creatorName: "크리에이터 이름",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "카테고리",

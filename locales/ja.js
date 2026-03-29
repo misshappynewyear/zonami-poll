@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.ja = {
     phaseDescription: "お気に入りのクリエイターを推薦して、コミュニティのお祝いでスポットライトを当てましょう。",
     joinEvent: "イベントに参加",
     suggestionPeriod: "推薦期間",
+    shareVoteText: "ZoNa Nakama Discord Server Favorite Creator Award で、私の推し{category}である{name}に投票しました。",
     creatorName: "クリエイター名",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "カテゴリー",
