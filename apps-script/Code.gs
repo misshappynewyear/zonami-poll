@@ -1,12 +1,16 @@
 const SHEET_NAMES = {
   suggestions: "suggestions_private",
   approved: "approved_public",
+  votes: "votes_private",
 };
 
 const APPROVAL_DEFAULT = "not approved";
+const COUNTED_DEFAULT = "yes";
+const FRAUD_DEFAULT = "not fraudulent";
 const ALLOWED_CATEGORIES = ["Illustrator", "Influencers", "Writers"];
 const DISCORD_WEBHOOK_PROPERTY = "DISCORD_WEBHOOK_URL";
 const ALLOWED_SUGGESTION_FIELDS = ["creator_name", "category", "link", "reason", "metadata_json"];
+const ALLOWED_VOTE_FIELDS = ["action", "creator_id", "category", "metadata_json"];
 const MAX_SUGGESTIONS_PER_HOUR = 3;
 const MAX_SUGGESTIONS_PER_DAY = 10;
 
@@ -15,7 +19,19 @@ function doPost(e) {
     Logger.log("doPost received: %s", JSON.stringify(debugEvent_(e)));
     const data = parseRequestBody_(e);
     Logger.log("parsed payload: %s", JSON.stringify(data));
-    return handleSuggestionSubmit_(data);
+    const flags = getFeatureFlags_();
+    if (data.action === "vote") {
+      if (!flags.enableVotes) {
+        throw new Error("Voting is currently closed.");
+      }
+      return handleVoteSubmit_(data, flags);
+    }
+
+    if (!flags.enableSuggestions) {
+      throw new Error("Suggestions are currently closed.");
+    }
+
+    return handleSuggestionSubmit_(data, flags);
   } catch (error) {
     return jsonResponse_({
       ok: false,
@@ -29,6 +45,13 @@ function doGet(e) {
 
   if (action === "approved") {
     return getApprovedCreators_();
+  }
+
+  if (action === "config") {
+    return jsonResponse_({
+      ok: true,
+      ...getFeatureFlags_(),
+    });
   }
 
   Logger.log("doGet pinged");
@@ -45,7 +68,7 @@ function parseRequestBody_(e) {
 
   if (e.parameter && Object.keys(e.parameter).length) {
     Logger.log("parseRequestBody_: using e.parameter");
-    validateAllowedFields_(Object.keys(e.parameter), ALLOWED_SUGGESTION_FIELDS);
+    validateAllowedFields_(Object.keys(e.parameter), ALLOWED_SUGGESTION_FIELDS.concat(ALLOWED_VOTE_FIELDS));
     let metadata = {};
     if (e.parameter.metadata_json) {
       try {
@@ -56,6 +79,8 @@ function parseRequestBody_(e) {
     }
 
     return {
+      action: cleanString_(e.parameter.action, 40),
+      creator_id: cleanString_(e.parameter.creator_id, 120),
       creator_name: cleanString_(e.parameter.creator_name),
       category: cleanString_(e.parameter.category),
       link: cleanString_(e.parameter.link),
@@ -90,9 +115,11 @@ function parseRequestBody_(e) {
       }
     }
 
-    validateAllowedFields_(Object.keys(params), ALLOWED_SUGGESTION_FIELDS);
+    validateAllowedFields_(Object.keys(params), ALLOWED_SUGGESTION_FIELDS.concat(ALLOWED_VOTE_FIELDS));
 
     return {
+      action: cleanString_(params.action, 40),
+      creator_id: cleanString_(params.creator_id, 120),
       creator_name: cleanString_(params.creator_name),
       category: cleanString_(params.category),
       link: cleanString_(params.link),
@@ -109,9 +136,11 @@ function parseRequestBody_(e) {
     throw new Error("Request body must be valid JSON.");
   }
 
-  validateAllowedFields_(Object.keys(parsed || {}), ["creator_name", "category", "link", "reason", "metadata"]);
+  validateAllowedFields_(Object.keys(parsed || {}), ["creator_name", "category", "link", "reason", "metadata", "action", "creator_id"]);
 
   return {
+    action: cleanString_(parsed.action, 40),
+    creator_id: cleanString_(parsed.creator_id, 120),
     creator_name: cleanString_(parsed.creator_name),
     category: cleanString_(parsed.category),
     link: cleanString_(parsed.link),
@@ -138,7 +167,7 @@ function validateSuggestionPayload_(data) {
   }
 }
 
-function handleSuggestionSubmit_(data) {
+function handleSuggestionSubmit_(data, flags) {
   validateSuggestionPayload_(data);
 
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.suggestions);
@@ -146,7 +175,7 @@ function handleSuggestionSubmit_(data) {
     throw new Error(`Missing sheet: ${SHEET_NAMES.suggestions}`);
   }
 
-  const metadata = buildMetadata_(data);
+  const metadata = buildMetadata_(data, "suggestion");
   enforceSuggestionSecurity_(sheet, data, metadata);
 
   const submissionId = createSubmissionId_();
@@ -168,16 +197,19 @@ function handleSuggestionSubmit_(data) {
 
   const rowNumber = sheet.getLastRow();
 
-  const webhookResult = sendDiscordSuggestionAlert_({
-    submissionId,
-    timestamp,
-    creator_name: data.creator_name,
-    category: data.category,
-    link: data.link,
-    reason: data.reason,
-  });
-
-  sheet.getRange(rowNumber, 11).setValue(webhookResult);
+  if (flags.discordSuggestions) {
+    const webhookResult = sendDiscordSuggestionAlert_({
+      submissionId,
+      timestamp,
+      creator_name: data.creator_name,
+      category: data.category,
+      link: data.link,
+      reason: data.reason,
+    });
+    sheet.getRange(rowNumber, 11).setValue(webhookResult);
+  } else {
+    sheet.getRange(rowNumber, 11).setValue("webhook:disabled");
+  }
 
   return jsonResponse_({
     ok: true,
@@ -205,7 +237,7 @@ function enforceSuggestionSecurity_(sheet, data, metadata) {
   }
 }
 
-function buildMetadata_(data) {
+function buildMetadata_(data, pageType) {
   const input = data.metadata || {};
 
   return {
@@ -216,12 +248,26 @@ function buildMetadata_(data) {
     screen: cleanString_(input.screen, 80),
     referrer: cleanString_(input.referrer, 500),
     submitted_at_client: cleanString_(input.submitted_at_client, 120),
-    page: "suggestion",
+    page: cleanString_(pageType, 40) || "suggestion",
   };
 }
 
 function createSubmissionId_() {
   return `sub_${Utilities.getUuid().replace(/-/g, "").slice(0, 16)}`;
+}
+
+function createVoteId_() {
+  return `vote_${Utilities.getUuid().replace(/-/g, "").slice(0, 16)}`;
+}
+
+function validateVotePayload_(data) {
+  if (!data.creator_id || !/^sub_[a-z0-9]{16}$/i.test(data.creator_id)) {
+    throw new Error("Creator ID is required and must be valid.");
+  }
+
+  if (data.category && !ALLOWED_CATEGORIES.includes(data.category)) {
+    throw new Error("Category is invalid.");
+  }
 }
 
 function validateAllowedFields_(keys, allowedFields) {
@@ -416,6 +462,220 @@ function getApprovedCreators_() {
     ok: true,
     creators,
   });
+}
+
+function handleVoteSubmit_(data, flags) {
+  validateVotePayload_(data);
+
+  const votesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.votes);
+  if (!votesSheet) {
+    throw new Error(`Missing sheet: ${SHEET_NAMES.votes}`);
+  }
+
+  const approvedCreator = getApprovedCreatorById_(data.creator_id);
+  if (!approvedCreator) {
+    throw new Error("Creator ID is invalid.");
+  }
+
+  if (data.category && data.category !== approvedCreator.category) {
+    throw new Error("Category does not match the approved creator.");
+  }
+
+  const metadata = buildMetadata_(data, "vote");
+  if (!metadata.browser_token) {
+    throw new Error("Missing browser token.");
+  }
+
+  const voteDate = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd");
+  if (hasExistingVoteForDate_(votesSheet, metadata.browser_token, voteDate)) {
+    throw new Error("You already voted today.");
+  }
+
+  const voteId = createVoteId_();
+  const timestamp = new Date();
+  const metadataJson = JSON.stringify(metadata);
+  const fraudFlag = evaluateVoteFraud_(votesSheet, metadata, voteDate, timestamp);
+
+  votesSheet.appendRow([
+    voteId,
+    timestamp,
+    approvedCreator.creator_id,
+    approvedCreator.creator_name,
+    approvedCreator.category,
+    metadata.browser_token,
+    voteDate,
+    COUNTED_DEFAULT,
+    metadataJson,
+    "",
+    fraudFlag,
+  ]);
+
+  if (flags.discordVotes) {
+    // Placeholder for future vote webhook if needed.
+  }
+
+  return jsonResponse_({
+    ok: true,
+    vote_id: voteId,
+    message: "Vote saved.",
+  });
+}
+
+function getFeatureFlags_() {
+  const props = PropertiesService.getScriptProperties();
+  const phase = cleanString_(props.getProperty("APP_PHASE") || "suggestion");
+  const discordSuggestions = parseBoolean_(props.getProperty("DISCORD_SUGGESTIONS"));
+  const discordVotes = parseBoolean_(props.getProperty("DISCORD_VOTES"));
+
+  return {
+    phase,
+    enableSuggestions: phase !== "vote",
+    enableVotes: phase === "vote",
+    discordSuggestions: discordSuggestions !== null ? discordSuggestions : true,
+    discordVotes: discordVotes !== null ? discordVotes : false,
+  };
+}
+
+function parseBoolean_(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const normalized = String(value).trim().toLowerCase();
+  if (["true", "1", "yes", "on"].includes(normalized)) return true;
+  if (["false", "0", "no", "off"].includes(normalized)) return false;
+  return null;
+}
+
+function getApprovedCreatorById_(creatorId) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.approved);
+  if (!sheet) {
+    throw new Error(`Missing sheet: ${SHEET_NAMES.approved}`);
+  }
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return null;
+  }
+
+  const values = sheet.getRange(2, 1, lastRow - 1, 5).getValues();
+  for (let index = 0; index < values.length; index += 1) {
+    const row = values[index];
+    if (cleanString_(row[0]) !== creatorId) continue;
+    return {
+      creator_id: cleanString_(row[0]),
+      creator_name: cleanString_(row[1]),
+      category: cleanString_(row[2]),
+      link: cleanString_(row[3]),
+      reason: cleanString_(row[4]),
+    };
+  }
+
+  return null;
+}
+
+function hasExistingVoteForDate_(sheet, browserToken, voteDate) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return false;
+  }
+
+  const values = sheet.getRange(2, 6, lastRow - 1, 2).getValues();
+  for (let index = 0; index < values.length; index += 1) {
+    const rowBrowserToken = cleanString_(values[index][0], 200);
+    const rowVoteDate = cleanString_(values[index][1], 20);
+    if (rowBrowserToken === browserToken && rowVoteDate === voteDate) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function evaluateVoteFraud_(sheet, metadata, voteDate, timestamp) {
+  const browserToken = cleanString_(metadata.browser_token, 200);
+  if (!browserToken) {
+    return "suspicious";
+  }
+
+  const fingerprint = buildVoteFingerprint_(metadata);
+  let score = 0;
+  if (!metadata.user_agent || !metadata.screen || !metadata.timezone) {
+    score += 2;
+  }
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return scoreToFraudLabel_(score);
+  }
+
+  const now = timestamp instanceof Date ? timestamp : new Date();
+  const hourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const values = sheet.getRange(2, 2, lastRow - 1, 8).getValues();
+
+  let votesLastHour = 0;
+  let votesLastDay = 0;
+  let votesLastWeek = 0;
+  let votesLastMonth = 0;
+  let latestVote = null;
+  let fingerprintLastHour = 0;
+  let fingerprintLastDay = 0;
+  let fingerprintLastTenMinutes = 0;
+
+  for (let index = 0; index < values.length; index += 1) {
+    const rowTimestamp = values[index][0];
+    const rowBrowserToken = cleanString_(values[index][4], 200);
+    const rowMetadataJson = values[index][7];
+    const rowFingerprint = buildVoteFingerprint_(safeParseJson_(rowMetadataJson));
+    if (!(rowTimestamp instanceof Date)) continue;
+
+    if (rowBrowserToken === browserToken) {
+      if (!latestVote || rowTimestamp > latestVote) latestVote = rowTimestamp;
+      if (rowTimestamp >= hourAgo) votesLastHour += 1;
+      if (rowTimestamp >= dayAgo) votesLastDay += 1;
+      if (rowTimestamp >= weekAgo) votesLastWeek += 1;
+      if (rowTimestamp >= monthAgo) votesLastMonth += 1;
+    }
+
+    if (fingerprint && rowFingerprint === fingerprint) {
+      if (rowTimestamp >= tenMinutesAgo) fingerprintLastTenMinutes += 1;
+      if (rowTimestamp >= hourAgo) fingerprintLastHour += 1;
+      if (rowTimestamp >= dayAgo) fingerprintLastDay += 1;
+    }
+  }
+
+  if (latestVote && now.getTime() - latestVote.getTime() < 60 * 1000) {
+    score += 2;
+  }
+  if (votesLastHour >= 1) score += 3;
+  if (votesLastDay >= 1) score += 3;
+  if (votesLastWeek >= 3) score += 2;
+  if (votesLastMonth >= 5) score += 2;
+  if (fingerprintLastTenMinutes >= 1) score += 2;
+  if (fingerprintLastHour >= 2) score += 2;
+  if (fingerprintLastDay >= 3) score += 2;
+
+  return scoreToFraudLabel_(score);
+}
+
+function buildVoteFingerprint_(metadata) {
+  if (!metadata || typeof metadata !== "object") return "";
+  const parts = [
+    normalizeForCompare_(metadata.user_agent),
+    normalizeForCompare_(metadata.screen),
+    normalizeForCompare_(metadata.timezone),
+    normalizeForCompare_(metadata.language),
+  ].filter(Boolean);
+
+  if (!parts.length) return "";
+  return parts.join("|");
+}
+
+function scoreToFraudLabel_(score) {
+  if (score >= 5) return "probably fraudulent";
+  if (score >= 3) return "suspicious";
+  return FRAUD_DEFAULT;
 }
 
 function testDiscordAuth() {

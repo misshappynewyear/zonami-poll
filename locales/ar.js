@@ -12,6 +12,7 @@ window.VOTE_PAGE_LOCALES.ar = {
     phaseDescription: "رشّح صانع المحتوى المفضل لديك حتى نسلط عليه الضوء في احتفال المجتمع.",
     joinEvent: "انضم إلى الحدث",
     suggestionPeriod: "مرحلة الترشيحات",
+    shareVoteText: "لقد صوتُّ لـ {name}، وهو {category} المفضل لدي، في ZoNa Nakama Discord Server Favorite Creator Award.",
     creatorName: "اسم صانع المحتوى",
     creatorNamePlaceholder: "ZoNamiLover",
     category: "الفئة",

@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZoNami Creator World Vote</title>
+    <meta
+      name="description"
+      content="A fan voting experience for ZoNami content creators, inspired by the WT100 event aesthetic."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/webp" href="./img/logo.webp" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell" id="home">
+      <header class="topbar">
+        <a class="topbar-logo" href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener">
+          <span class="logo-micro" data-i18n="brand.server">ZoNa Nakama Discord Server</span>
+          <strong data-i18n="brand.awards">ZN CONTENT CREATOR AWARDS</strong>
+        </a>
+        <label class="lang-control">
+          <span class="visually-hidden" data-i18n="lang.label">Language</span>
+          <select id="languageSelect" aria-label="Language">
+            <option value="en">EN</option>
+            <option value="es">ES</option>
+            <option value="fr">FR</option>
+            <option value="pt">PT</option>
+            <option value="ja">JA</option>
+            <option value="zh">ZH</option>
+            <option value="ko">KO</option>
+            <option value="hi">HI</option>
+            <option value="it">IT</option>
+            <option value="id">ID</option>
+            <option value="vi">VI</option>
+            <option value="tl">TL</option>
+            <option value="ar">AR</option>
+          </select>
+        </label>
+      </header>
+
+      <main class="poster">
+        <section class="hero-frame">
+          <div class="hero-collage">
+            <div class="hero-masthead">
+              <p class="hero-kicker">
+                <a href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener">
+                  <span data-i18n="brand.server">ZoNa Nakama Discord Server</span>
+                </a>
+              </p>
+              <h1 data-i18n="hero.title">ZN CONTENT CREATOR</h1>
+            </div>
+
+            <div class="hero-character">
+              <a href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener">
+                <img class="hero-logo" src="./img/logo.webp" alt="ZoNa Nakama Discord Server logo" />
+              </a>
+            </div>
+
+            <a class="cta-ribbon" href="#participate" data-action-label data-i18n="hero.cta">Suggest Now</a>
+          </div>
+
+          <section class="count-panel">
+            <p class="count-mark" data-i18n="hero.vote_count">Current Vote Count</p>
+            <div class="count-line">
+              <span class="count-sigil">v</span>
+              <strong id="voteCounter">00,000,000</strong>
+            </div>
+            <p class="count-subline">
+              <span data-i18n="hero.proposed_creators">Proposed creators:</span>
+              <span id="creatorCounter">00</span>
+            </p>
+          </section>
+        </section>
+
+        <section class="paper-card intro-card" id="about">
+          <div class="crest" aria-label="Zona Podcast"></div>
+          <h2 data-i18n-html="intro.title">Who Is Your<br />Favorite ZoNami Creator</h2>
+          <p data-i18n-html="intro.body">
+            This version is for real people voting on ZoNami content creators.
+            First the page collects suggestions from the community. After that,
+            voting opens for the approved lineup.
+          </p>
+          <p id="phaseDescription" data-i18n="intro.phase_description">
+            Submit your favorite creators so they can enter the official vote.
+          </p>
+        </section>
+
+        <section class="paper-card participate-card" id="participate">
+          <div class="section-band">
+            <span data-i18n="participate.kicker">Join The Event</span>
+            <h2 id="phaseTitle" data-i18n="participate.title">Suggestion Period</h2>
+          </div>
+
+          <div class="mode-panel" data-mode="suggest" id="suggestionPanel">
+            <form class="entry-form" id="suggestionForm">
+              <label>
+                <span data-i18n="form.creator_name">Creator name</span>
+                <input type="text" name="name" placeholder="ZoNamiLover" data-i18n-placeholder="form.creator_name_placeholder" required pattern="^[^@].*$" />
+              </label>
+              <label>
+                <span data-i18n="form.category">Category</span>
+                <select name="platform" required>
+                  <option value="" data-i18n="form.category_placeholder">Select a category</option>
+                  <option value="Illustrator" data-i18n="category.Illustrator">Illustrator</option>
+                  <option value="Influencers" data-i18n="category.Influencers">Influencers</option>
+                  <option value="Writers" data-i18n="category.Writers">Writers</option>
+                </select>
+              </label>
+              <label>
+                <span data-i18n="form.link">Link</span>
+                <input type="url" name="region" placeholder="https://example.com/profile" data-i18n-placeholder="form.link_placeholder" required />
+              </label>
+              <label>
+                <span data-i18n="form.reason">Why should they be included?</span>
+                <textarea name="pitch" rows="4" placeholder="Explain what makes this creator special to ZoNami fans." data-i18n-placeholder="form.reason_placeholder" required></textarea>
+              </label>
+              <button class="form-button" type="submit" data-i18n="form.submit">Submit Suggestion</button>
+            </form>
+
+            <div class="loading-panel is-hidden" id="loadingPanel" aria-live="polite">
+              <p class="loading-kicker" data-i18n="loading.kicker">Submitting</p>
+              <h3 data-i18n="loading.title">Sending your suggestion...</h3>
+              <p class="loading-copy" data-i18n="loading.body">Please wait while we save it for the mods to review.</p>
+            </div>
+
+            <div class="success-panel is-hidden" id="successPanel" aria-live="polite">
+              <p class="success-kicker" data-i18n="success.kicker">Suggestion Received</p>
+              <h3 id="successTitle">Thank you for suggesting this creator!</h3>
+              <p class="success-copy" data-i18n="success.body">The mods will review your vote.</p>
+              <button class="form-button" type="button" id="suggestAgainButton" data-i18n="success.cta">Suggest Again</button>
+            </div>
+          </div>
+
+          <div class="mode-panel is-hidden" data-mode="vote">
+            <form class="search-form">
+              <label>
+                Search creators
+                <input id="creatorSearch" type="search" placeholder="Search by creator or platform" />
+              </label>
+            </form>
+            <p class="vote-note">
+              In this demo, votes are stored locally in the browser with
+              <code>localStorage</code>.
+            </p>
+          </div>
+
+          <p class="feedback" id="feedbackMessage" aria-live="polite"></p>
+        </section>
+
+        <section class="paper-card creator-card-shell" id="hot">
+          <div class="section-band">
+            <span data-i18n="creators.kicker">Creator Ranking</span>
+            <h2 id="participateTitle" data-i18n="creators.title">Suggested Creators</h2>
+          </div>
+          <div class="creator-filters" aria-label="Creator filters">
+            <button class="creator-filter is-active" type="button" data-filter="slideshow" data-i18n="filters.slideshow">Slideshow</button>
+            <button class="creator-filter" type="button" data-filter="Illustrator" data-i18n="filters.artists">Artists</button>
+            <button class="creator-filter" type="button" data-filter="Influencers" data-i18n="filters.influencers">Influencers</button>
+            <button class="creator-filter" type="button" data-filter="Writers" data-i18n="filters.writers">Writers</button>
+            <button class="creator-filter creator-search-toggle" type="button" id="creatorSearchToggle" aria-label="Search creators">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10.5 3a7.5 7.5 0 1 1 0 15a7.5 7.5 0 0 1 0-15Zm0 2a5.5 5.5 0 1 0 0 11a5.5 5.5 0 0 0 0-11Zm7.61 11.2L22 20.09L20.09 22l-3.89-3.89l1.91-1.91Z" />
+              </svg>
+            </button>
+          </div>
+          <div class="creator-search-panel is-hidden" id="creatorSearchPanel">
+            <input id="creatorSearchInput" type="search" placeholder="Search by creator, link, or recommendation" />
+          </div>
+          <div class="creator-list-shell">
+            <ul class="creator-list" id="creatorGrid"></ul>
+          </div>
+          <div class="creator-pagination is-inactive" id="creatorPagination">
+            <button class="creator-page-button" type="button" id="creatorPrevButton" aria-label="Previous page">‹</button>
+            <span class="creator-page-status" id="creatorPageStatus">1 / 1</span>
+            <button class="creator-page-button" type="button" id="creatorNextButton" aria-label="Next page">›</button>
+          </div>
+        </section>
+
+        <section class="paper-card rules-card" id="rules">
+          <div class="section-band">
+            <span data-i18n="rules.kicker">Rules</span>
+            <h2 data-i18n="rules.title">How Participation Works</h2>
+          </div>
+          <ul class="rule-list" id="ruleList"></ul>
+        </section>
+
+        <section class="paper-card rewards-card" id="rewards">
+          <div class="section-band">
+            <span data-i18n="rewards.kicker">Event Highlights</span>
+            <h2 data-i18n="rewards.title">Fan Campaign Features</h2>
+          </div>
+          <div class="reward-cards">
+            <article>
+              <h3 data-i18n="rewards.stage_title">Suggestion Stage</h3>
+              <p data-i18n="rewards.stage_body">Fans can build the ballot by proposing creators before voting opens.</p>
+            </article>
+            <article>
+              <h3 data-i18n="rewards.daily_title">Daily Voting</h3>
+              <p data-i18n="rewards.daily_body">Once voting starts, supporters can return and push their favorites higher.</p>
+            </article>
+            <article>
+              <h3 data-i18n="rewards.reveal_title">Ranking Reveal</h3>
+              <p data-i18n="rewards.reveal_body">The final result can be presented as a Top 100 celebration page.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="paper-card discord-card" id="discord">
+          <div class="section-band">
+            <span data-i18n="discord.kicker">Join The Crew</span>
+            <h2 data-i18n="discord.title">Calling all ZoNa shippers!</h2>
+          </div>
+          <p class="discord-copy" data-i18n="discord.body">Board our Discord and sail with us for all things Zoro x Nami.</p>
+          <p class="discord-emoji">⚓️ 💚🧡 Zoro × Nami 🧡💚</p>
+          <a class="form-button discord-button" href="https://discord.gg/8rcrtwQWV7" target="_blank" rel="noreferrer noopener" data-i18n="discord.cta">Join the Server</a>
+          <div class="social-links" aria-label="ZoNa social links">
+            <a class="social-button" href="https://x.com/ZonaNakama" target="_blank" rel="noreferrer noopener" aria-label="ZonaNakama on X">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18.244 2H21.5l-7.11 8.126L22 22h-5.956l-4.664-6.99L5.264 22H2l7.604-8.691L2.312 2h6.106l4.216 6.377L18.244 2Zm-1.142 18h1.804L7.428 3.895H5.492L17.102 20Z" />
+              </svg>
+            </a>
+            <a class="social-button" href="https://www.tumblr.com/zonamievents" target="_blank" rel="noreferrer noopener" aria-label="ZoNamiEvents on Tumblr">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14.078 20c-3.387 0-4.944-2.423-4.944-4.88v-5.3H6V6.372c2.173-.786 3.46-2.728 3.777-5.372h3.269v4.86H17.7V9.82h-4.654v4.879c0 1.153.596 1.807 1.653 1.807.56 0 1.153-.192 1.653-.462v3.11c-.73.5-1.73.846-2.274.846Z" />
+              </svg>
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="creatorCardTemplate">
+      <li class="creator-card">
+        <div class="creator-body">
+          <p class="creator-category"></p>
+          <h3 class="creator-name"></h3>
+          <p class="creator-link"></p>
+          <p class="creator-pitch"></p>
+        </div>
+      </li>
+    </template>
+
+    <script src="./config.js"></script>
+    <script src="./locales/index.js"></script>
+    <script src="./locales/en.js"></script>
+    <script src="./locales/es.js"></script>
+    <script src="./locales/fr.js"></script>
+    <script src="./locales/pt.js"></script>
+    <script src="./locales/ja.js"></script>
+    <script src="./locales/zh.js"></script>
+    <script src="./locales/ko.js"></script>
+    <script src="./locales/hi.js"></script>
+    <script src="./locales/it.js"></script>
+    <script src="./locales/id.js"></script>
+    <script src="./locales/vi.js"></script>
+    <script src="./locales/tl.js"></script>
+    <script src="./locales/ar.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
+
