@@ -176,6 +176,18 @@ function setFeedback(message, type = "") {
   if (type) feedbackMessage.classList.add(`is-${type}`);
 }
 
+function localizeSubmissionError(message) {
+  const errorMap = {
+    "Too many suggestions from this browser. Please wait before sending another one.": "submitRateHourly",
+    "Daily suggestion limit reached for this browser.": "submitRateDaily",
+    "You already sent this creator from this browser.": "submitDuplicate",
+    "Missing browser token.": "submitTryAgain",
+  };
+
+  const translationKey = errorMap[message];
+  return translationKey ? t(translationKey) : (message || t("submitError"));
+}
+
 function showSuggestionSuccess(name) {
   loadingPanel.classList.add("is-hidden");
   suggestionForm.classList.add("is-hidden");
@@ -425,7 +437,7 @@ suggestionForm.addEventListener("submit", async (event) => {
     showSuggestionSuccess(name);
   } catch (error) {
     showSuggestionForm();
-    setFeedback(error.message || t("submitError"), "error");
+    setFeedback(localizeSubmissionError(error.message), "error");
   } finally {
     submitButton.disabled = false;
     submitButton.textContent = originalButtonText;
