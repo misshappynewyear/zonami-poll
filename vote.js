@@ -2,6 +2,7 @@ const SUBMISSION_ENDPOINT = window.VOTE_PAGE_CONFIG?.submissionEndpoint ?? "";
 const APPROVED_ENDPOINT = SUBMISSION_ENDPOINT ? `${SUBMISSION_ENDPOINT}?action=approved` : "";
 const LANGUAGE_STORAGE_KEY = "ZNCCA-lang";
 const DAILY_VOTE_STORAGE_KEY = "ZNCCA-vd";
+const BROWSER_TOKEN_STORAGE_KEY = "ZNCCA-bt";
 const LANGUAGE_CODES = ["en", "es", "fr", "pt", "ja", "zh", "ko", "hi", "it", "id", "vi", "tl", "ar"];
 const RTL_LANGUAGES = new Set(["ar"]);
 const translations = window.VOTE_PAGE_LOCALES || {};
@@ -76,7 +77,8 @@ const state = {
   showcaseSelection: [],
   activeCreatorFilter: "slideshow",
   creatorPage: 0,
-  creatorSearchQuery: ""
+  creatorSearchQuery: "",
+  voteSubmitting: false
 };
 
 const CREATORS_PER_PAGE = 5;
@@ -110,6 +112,26 @@ function hasStoredVoteForToday() {
 
 function storeTodayVote() {
   localStorage.setItem(DAILY_VOTE_STORAGE_KEY, getTodayKey());
+}
+
+function getBrowserToken() {
+  const existing = localStorage.getItem(BROWSER_TOKEN_STORAGE_KEY);
+  if (existing) return existing;
+  const created = crypto.randomUUID();
+  localStorage.setItem(BROWSER_TOKEN_STORAGE_KEY, created);
+  return created;
+}
+
+function buildVoteMetadata() {
+  return {
+    browser_token: getBrowserToken(),
+    user_agent: navigator.userAgent,
+    language: navigator.language,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    screen: `${window.screen.width}x${window.screen.height}`,
+    referrer: document.referrer,
+    submitted_at_client: new Date().toISOString(),
+  };
 }
 
 function t(key, params = {}) {
@@ -285,6 +307,19 @@ function setFeedback(message, type = "") {
   if (type) feedbackMessage.classList.add(`is-${type}`);
 }
 
+function localizeVoteError(message) {
+  const errorMap = {
+    "Voting is currently closed.": "voteClosed",
+    "You already voted today.": "voteAlready",
+    "Creator ID is invalid.": "voteInvalidCreator",
+    "Creator ID is required and must be valid.": "voteInvalidCreator",
+    "Category does not match the approved creator.": "voteInvalidCreator",
+    "Missing browser token.": "voteTryAgain",
+  };
+  const translationKey = errorMap[message];
+  return translationKey ? t(translationKey) : (message || t("voteSubmitError"));
+}
+
 function applyVoteLockState() {
   heroCta.textContent = state.hasVotedToday ? t("heroVotedCta") : t("heroVoteCta");
   votePhaseSection.classList.toggle("is-hidden", state.hasVotedToday && !state.votedCreator);
@@ -292,7 +327,7 @@ function applyVoteLockState() {
     button.disabled = state.hasVotedToday;
     button.classList.toggle("is-disabled", state.hasVotedToday);
   });
-  if (voteSearchInput) voteSearchInput.disabled = state.hasVotedToday;
+  if (voteSearchInput) voteSearchInput.disabled = state.hasVotedToday || state.voteSubmitting;
 }
 
 function renderLanguage() {
@@ -409,7 +444,21 @@ function renderCategoryView() {
     initials.textContent = getInitials(creator.name);
     name.textContent = creator.name;
     button.setAttribute("aria-label", creator.name);
-    button.addEventListener("click", () => showResult(creator));
+    button.addEventListener("click", async () => {
+      if (state.hasVotedToday || state.voteSubmitting) return;
+      state.voteSubmitting = true;
+      applyVoteLockState();
+      setFeedback(t("voteSubmitting"), "");
+      try {
+        await submitVoteToBackend(creator);
+        setFeedback("", "");
+        showResult(creator);
+      } catch (error) {
+        state.voteSubmitting = false;
+        applyVoteLockState();
+        setFeedback(localizeVoteError(error.message), "error");
+      }
+    });
     voteCandidateGrid.appendChild(fragment);
   }
 
@@ -492,6 +541,25 @@ function updateShareActions() {
   shareOnXButton.href = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   shareOnFacebookButton.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
   nativeShareButton.disabled = !navigator.share;
+}
+
+async function submitVoteToBackend(creator) {
+  if (!SUBMISSION_ENDPOINT) {
+    throw new Error(t("voteEndpointMissing"));
+  }
+
+  const formData = new URLSearchParams();
+  formData.set("action", "vote");
+  formData.set("creator_id", creator.id || "");
+  formData.set("category", creator.category);
+  formData.set("metadata_json", JSON.stringify(buildVoteMetadata()));
+
+  const response = await fetch(SUBMISSION_ENDPOINT, { method: "POST", body: formData });
+  const result = await response.json();
+  if (!response.ok || !result.ok) {
+    throw new Error(result.message || t("voteSubmitError"));
+  }
+  return result;
 }
 
 async function handleNativeShare() {

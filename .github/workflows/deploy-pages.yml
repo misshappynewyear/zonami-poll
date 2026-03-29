@@ -35,6 +35,24 @@ jobs:
           };
           EOF
 
+      - name: Select phase entrypoint
+        shell: bash
+        run: |
+          PHASE="${{ vars.APP_PHASE }}"
+          if [ "$PHASE" = "suggestion" ]; then
+            if [ -f "index-suggestion.html" ]; then
+              cp index-suggestion.html index.html
+            fi
+            rm -f index-vote.html
+          elif [ "$PHASE" = "vote" ]; then
+            if [ -f "index-vote.html" ]; then
+              cp index-vote.html index.html
+            fi
+            rm -f index-suggestion.html
+          else
+            echo "APP_PHASE not set, using current index.html"
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
