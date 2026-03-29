@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.id = {
     withoutAt: 'Masukkan nama kreator tanpa "@".',
     sending: "Mengirim...",
     submitError: "Pengajuan tidak dapat dikirim.",
+    loadingCreators: "Memuat kreator...",
     noCreators: "Tidak ada kreator yang ditemukan.",
     thankYou: "Terima kasih sudah mengajukan {name}!",
     rule1: '<span class="rule-phase">Fase pengajuan</span><br /><br />Fans bisa mengajukan kreator favorit mereka dalam tiga kategori, dan setiap pengajuan harus menyertakan tautan yang menunjukkan karya yang sesuai dengan kategori tersebut.<br /><br /><span class="rule-detail"><strong>Ilustrator</strong>: fanart, ilustrasi, dan gambar.</span><br /><span class="rule-detail"><strong>Penulis</strong>: fanfic dan karya tulis ZoNami lainnya.</span><br /><span class="rule-detail"><strong>Influencer</strong>: fans yang aktif membagikan dan mendukung ZoNami di media sosial.</span><br /><br />Kamu bisa mengajukan kreator dari Twitter, TikTok, Instagram, Tumblr, AO3, dan platform lainnya.',

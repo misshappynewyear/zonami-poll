@@ -6,54 +6,16 @@ const SHEET_NAMES = {
 const APPROVAL_DEFAULT = "not approved";
 const ALLOWED_CATEGORIES = ["Illustrator", "Influencers", "Writers"];
 const DISCORD_WEBHOOK_PROPERTY = "DISCORD_WEBHOOK_URL";
+const ALLOWED_SUGGESTION_FIELDS = ["creator_name", "category", "link", "reason", "metadata_json"];
+const MAX_SUGGESTIONS_PER_HOUR = 3;
+const MAX_SUGGESTIONS_PER_DAY = 10;
 
 function doPost(e) {
   try {
     Logger.log("doPost received: %s", JSON.stringify(debugEvent_(e)));
     const data = parseRequestBody_(e);
     Logger.log("parsed payload: %s", JSON.stringify(data));
-    validateSuggestionPayload_(data);
-
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.suggestions);
-    if (!sheet) {
-      throw new Error(`Missing sheet: ${SHEET_NAMES.suggestions}`);
-    }
-
-    const submissionId = createSubmissionId_();
-    const timestamp = new Date();
-    const metadataJson = JSON.stringify(buildMetadata_(data));
-
-    sheet.appendRow([
-      submissionId,
-      timestamp,
-      data.creator_name,
-      data.category,
-      data.link,
-      data.reason,
-      APPROVAL_DEFAULT,
-      "",
-      metadataJson,
-      "",
-    ]);
-
-    const rowNumber = sheet.getLastRow();
-
-    const webhookResult = sendDiscordSuggestionAlert_({
-      submissionId,
-      timestamp,
-      creator_name: data.creator_name,
-      category: data.category,
-      link: data.link,
-      reason: data.reason,
-    });
-
-    sheet.getRange(rowNumber, 11).setValue(webhookResult);
-
-    return jsonResponse_({
-      ok: true,
-      submission_id: submissionId,
-      message: "Suggestion saved.",
-    });
+    return handleSuggestionSubmit_(data);
   } catch (error) {
     return jsonResponse_({
       ok: false,
@@ -83,6 +45,7 @@ function parseRequestBody_(e) {
 
   if (e.parameter && Object.keys(e.parameter).length) {
     Logger.log("parseRequestBody_: using e.parameter");
+    validateAllowedFields_(Object.keys(e.parameter), ALLOWED_SUGGESTION_FIELDS);
     let metadata = {};
     if (e.parameter.metadata_json) {
       try {
@@ -127,6 +90,8 @@ function parseRequestBody_(e) {
       }
     }
 
+    validateAllowedFields_(Object.keys(params), ALLOWED_SUGGESTION_FIELDS);
+
     return {
       creator_name: cleanString_(params.creator_name),
       category: cleanString_(params.category),
@@ -143,6 +108,8 @@ function parseRequestBody_(e) {
   } catch (_error) {
     throw new Error("Request body must be valid JSON.");
   }
+
+  validateAllowedFields_(Object.keys(parsed || {}), ["creator_name", "category", "link", "reason", "metadata"]);
 
   return {
     creator_name: cleanString_(parsed.creator_name),
@@ -171,6 +138,73 @@ function validateSuggestionPayload_(data) {
   }
 }
 
+function handleSuggestionSubmit_(data) {
+  validateSuggestionPayload_(data);
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAMES.suggestions);
+  if (!sheet) {
+    throw new Error(`Missing sheet: ${SHEET_NAMES.suggestions}`);
+  }
+
+  const metadata = buildMetadata_(data);
+  enforceSuggestionSecurity_(sheet, data, metadata);
+
+  const submissionId = createSubmissionId_();
+  const timestamp = new Date();
+  const metadataJson = JSON.stringify(metadata);
+
+  sheet.appendRow([
+    submissionId,
+    timestamp,
+    data.creator_name,
+    data.category,
+    data.link,
+    data.reason,
+    APPROVAL_DEFAULT,
+    "",
+    metadataJson,
+    "",
+  ]);
+
+  const rowNumber = sheet.getLastRow();
+
+  const webhookResult = sendDiscordSuggestionAlert_({
+    submissionId,
+    timestamp,
+    creator_name: data.creator_name,
+    category: data.category,
+    link: data.link,
+    reason: data.reason,
+  });
+
+  sheet.getRange(rowNumber, 11).setValue(webhookResult);
+
+  return jsonResponse_({
+    ok: true,
+    submission_id: submissionId,
+    message: "Suggestion saved.",
+  });
+}
+
+function enforceSuggestionSecurity_(sheet, data, metadata) {
+  if (!metadata.browser_token) {
+    throw new Error("Missing browser token.");
+  }
+
+  const recentStats = getSuggestionStatsForToken_(sheet, metadata.browser_token);
+  if (recentStats.hourCount >= MAX_SUGGESTIONS_PER_HOUR) {
+    throw new Error("Too many suggestions from this browser. Please wait before sending another one.");
+  }
+
+  if (recentStats.dayCount >= MAX_SUGGESTIONS_PER_DAY) {
+    throw new Error("Daily suggestion limit reached for this browser.");
+  }
+
+  if (hasDuplicateSuggestionForToken_(sheet, metadata.browser_token, data.creator_name, data.link)) {
+    throw new Error("You already sent this creator from this browser.");
+  }
+}
+
 function buildMetadata_(data) {
   const input = data.metadata || {};
 
@@ -188,6 +222,84 @@ function buildMetadata_(data) {
 
 function createSubmissionId_() {
   return `sub_${Utilities.getUuid().replace(/-/g, "").slice(0, 16)}`;
+}
+
+function validateAllowedFields_(keys, allowedFields) {
+  const invalidKeys = (keys || []).filter((key) => allowedFields.indexOf(key) === -1);
+  if (invalidKeys.length) {
+    throw new Error(`Unexpected fields: ${invalidKeys.join(", ")}`);
+  }
+}
+
+function normalizeForCompare_(value) {
+  return String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function getSuggestionStatsForToken_(sheet, browserToken) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return { hourCount: 0, dayCount: 0 };
+  }
+
+  const values = sheet.getRange(2, 2, lastRow - 1, 8).getValues();
+  const now = new Date();
+  const hourAgo = new Date(now.getTime() - 60 * 60 * 1000);
+  const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  let hourCount = 0;
+  let dayCount = 0;
+
+  for (let index = 0; index < values.length; index += 1) {
+    const row = values[index];
+    const timestamp = row[0];
+    const metadataJson = row[7];
+    if (!(timestamp instanceof Date)) continue;
+
+    const metadata = safeParseJson_(metadataJson);
+    const rowBrowserToken = cleanString_(metadata.browser_token, 200);
+    if (rowBrowserToken !== browserToken) continue;
+
+    if (timestamp >= hourAgo) hourCount += 1;
+    if (timestamp >= dayAgo) dayCount += 1;
+  }
+
+  return { hourCount, dayCount };
+}
+
+function hasDuplicateSuggestionForToken_(sheet, browserToken, creatorName, link) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return false;
+  }
+
+  const values = sheet.getRange(2, 3, lastRow - 1, 7).getValues();
+  const normalizedName = normalizeForCompare_(creatorName);
+  const normalizedLink = normalizeForCompare_(link);
+
+  for (let index = 0; index < values.length; index += 1) {
+    const row = values[index];
+    const rowName = normalizeForCompare_(row[0]);
+    const rowLink = normalizeForCompare_(row[2]);
+    const metadata = safeParseJson_(row[6]);
+    const rowBrowserToken = cleanString_(metadata.browser_token, 200);
+
+    if (rowBrowserToken !== browserToken) continue;
+    if (rowName === normalizedName && rowLink === normalizedLink) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function safeParseJson_(value) {
+  try {
+    return JSON.parse(String(value || "{}"));
+  } catch (_error) {
+    return {};
+  }
 }
 
 function cleanString_(value, maxLength) {

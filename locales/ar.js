@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.ar = {
     withoutAt: 'أدخل اسم صانع المحتوى من دون "@".',
     sending: "جارٍ الإرسال...",
     submitError: "تعذر إرسال الترشيح.",
+    loadingCreators: "جارٍ تحميل صناع المحتوى...",
     noCreators: "لم يتم العثور على أي مبدعين.",
     thankYou: "شكرًا لترشيحك {name}!",
     rule1: '<span class="rule-phase">مرحلة الترشيح</span><br /><br />يمكن للجمهور ترشيح صناع المحتوى المفضلين لديهم ضمن ثلاث فئات، ويجب أن يتضمن كل ترشيح رابطًا يُظهر العمل المناسب للفئة المختارة.<br /><br /><span class="rule-detail"><strong>الرسامون</strong>: فن المعجبين والرسومات واللوحات.</span><br /><span class="rule-detail"><strong>الكتّاب</strong>: الفانفيك وغيرها من الأعمال الكتابية الخاصة بـ ZoNami.</span><br /><span class="rule-detail"><strong>المؤثرون</strong>: المعجبون الذين يشاركون ويدعمون ZoNami بنشاط عبر وسائل التواصل الاجتماعي.</span><br /><br />يمكنك ترشيح مبدعين من Twitter وTikTok وInstagram وTumblr وAO3 ومنصات أخرى.',

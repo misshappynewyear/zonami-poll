@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.fr = {
     withoutAt: 'Saisissez le nom du createur sans "@".',
     sending: "Envoi...",
     submitError: "Impossible d'envoyer la suggestion.",
+    loadingCreators: "Chargement des createurs...",
     noCreators: "Aucun createur trouve.",
     thankYou: "Merci d'avoir propose {name} !",
     rule1: '<span class="rule-phase">Phase de soumission</span><br /><br />Les fans peuvent proposer leurs createurs favoris dans trois categories, et chaque suggestion doit inclure un lien montrant bien le travail correspondant a la categorie choisie.<br /><br /><span class="rule-detail"><strong>Illustrateurs</strong> : fanarts, illustrations et dessins.</span><br /><span class="rule-detail"><strong>Auteurs</strong> : fanfics et autres oeuvres ecrites ZoNami.</span><br /><span class="rule-detail"><strong>Influenceurs</strong> : fans qui partagent et soutiennent activement ZoNami sur les reseaux sociaux.</span><br /><br />Vous pouvez proposer des createurs venant de Twitter, TikTok, Instagram, Tumblr, AO3 et d\'autres plateformes.',

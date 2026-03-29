@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.vi = {
     withoutAt: 'Hãy nhập tên creator mà không có "@".',
     sending: "Đang gửi...",
     submitError: "Không thể gửi đề cử.",
+    loadingCreators: "Đang tải creator...",
     noCreators: "Không tìm thấy creator nào.",
     thankYou: "Cảm ơn bạn đã đề cử {name}!",
     rule1: '<span class="rule-phase">Giai đoạn gửi đề cử</span><br /><br />Fan có thể đề cử creator yêu thích của mình ở ba danh mục, và mỗi đề cử nên kèm theo một liên kết cho thấy tác phẩm phù hợp với danh mục đã chọn.<br /><br /><span class="rule-detail"><strong>Họa sĩ</strong>: fanart, tranh minh họa và bản vẽ.</span><br /><span class="rule-detail"><strong>Tác giả</strong>: fanfic và các tác phẩm viết khác về ZoNami.</span><br /><span class="rule-detail"><strong>Influencer</strong>: những fan tích cực chia sẻ và ủng hộ ZoNami trên mạng xã hội.</span><br /><br />Bạn có thể đề cử creator từ Twitter, TikTok, Instagram, Tumblr, AO3 và các nền tảng khác.',

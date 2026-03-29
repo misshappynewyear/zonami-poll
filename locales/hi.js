@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.hi = {
     withoutAt: 'क्रिएटर का नाम "@" के बिना लिखें।',
     sending: "भेजा जा रहा है...",
     submitError: "सुझाव भेजा नहीं जा सका।",
+    loadingCreators: "क्रिएटर्स लोड हो रहे हैं...",
     noCreators: "कोई क्रिएटर नहीं मिला।",
     thankYou: "{name} को सुझाव देने के लिए धन्यवाद!",
     rule1: '<span class="rule-phase">सबमिशन चरण</span><br /><br />फैंस अपने पसंदीदा क्रिएटर्स को तीन श्रेणियों में सुझा सकते हैं, और हर सुझाव के साथ ऐसा लिंक होना चाहिए जो चुनी गई श्रेणी के मुताबिक उनके काम को दिखाए।<br /><br /><span class="rule-detail"><strong>इलस्ट्रेटर्स</strong>: फैनआर्ट, इलस्ट्रेशन और ड्रॉइंग्स.</span><br /><span class="rule-detail"><strong>राइटर्स</strong>: फैनफिक और अन्य लिखित ZoNami काम.</span><br /><span class="rule-detail"><strong>इन्फ्लुएंसर्स</strong>: वे फैंस जो सोशल मीडिया पर ZoNami को सक्रिय रूप से साझा और सपोर्ट करते हैं.</span><br /><br />आप Twitter, TikTok, Instagram, Tumblr, AO3 और अन्य प्लेटफ़ॉर्म्स से क्रिएटर्स सुझा सकते हैं।',

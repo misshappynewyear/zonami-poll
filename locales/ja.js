@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.ja = {
     withoutAt: 'クリエイター名は「@」なしで入力してください。',
     sending: "送信中...",
     submitError: "推薦を送信できませんでした。",
+    loadingCreators: "クリエイターを読み込み中...",
     noCreators: "クリエイターが見つかりません。",
     thankYou: "{name} を推薦してくれてありがとう！",
     rule1: '<span class="rule-phase">推薦フェーズ</span><br /><br />ファンは3つのカテゴリーでお気に入りのクリエイターを推薦できます。各推薦には、選んだカテゴリーに合う作品が見られるリンクを含めてください。<br /><br /><span class="rule-detail"><strong>イラストレーター</strong>: ファンアート、イラスト、ドローイング。</span><br /><span class="rule-detail"><strong>ライター</strong>: ファンフィックやその他のZoNami文章作品。</span><br /><span class="rule-detail"><strong>インフルエンサー</strong>: SNSで積極的にZoNamiを広め、応援しているファン。</span><br /><br />Twitter、TikTok、Instagram、Tumblr、AO3など、さまざまなプラットフォームから推薦できます。',

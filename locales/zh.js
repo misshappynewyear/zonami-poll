@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.zh = {
     withoutAt: '请输入不带“@”的创作者名称。',
     sending: "提交中...",
     submitError: "无法提交推荐。",
+    loadingCreators: "正在加载创作者...",
     noCreators: "未找到创作者。",
     thankYou: "感谢你推荐 {name}！",
     rule1: '<span class="rule-phase">提交阶段</span><br /><br />粉丝可以在三个类别中推荐自己喜欢的创作者，每条推荐都应附上一个能展示该类别作品的链接。<br /><br /><span class="rule-detail"><strong>画师</strong>：同人图、插画和绘画作品。</span><br /><span class="rule-detail"><strong>写手</strong>：同人文和其他 ZoNami 文字作品。</span><br /><span class="rule-detail"><strong>推广者</strong>：在社交媒体上积极分享并支持 ZoNami 的粉丝。</span><br /><br />你可以推荐来自 Twitter、TikTok、Instagram、Tumblr、AO3 等平台的创作者。',

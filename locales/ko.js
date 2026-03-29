@@ -51,6 +51,7 @@ window.VOTE_PAGE_LOCALES.ko = {
     withoutAt: '크리에이터 이름은 "@" 없이 입력해 주세요.',
     sending: "보내는 중...",
     submitError: "추천을 제출할 수 없습니다.",
+    loadingCreators: "크리에이터 불러오는 중...",
     noCreators: "크리에이터를 찾을 수 없습니다.",
     thankYou: "{name} 님을 추천해 주셔서 감사합니다!",
     rule1: '<span class="rule-phase">추천 단계</span><br /><br />팬들은 세 가지 카테고리에서 좋아하는 크리에이터를 추천할 수 있으며, 각 추천에는 해당 카테고리에 맞는 작품을 보여 주는 링크가 포함되어야 합니다.<br /><br /><span class="rule-detail"><strong>일러스트레이터</strong>: 팬아트, 일러스트, 드로잉.</span><br /><span class="rule-detail"><strong>작가</strong>: 팬픽과 기타 ZoNami 글 작품.</span><br /><span class="rule-detail"><strong>인플루언서</strong>: 소셜 미디어에서 ZoNami를 적극적으로 공유하고 응원하는 팬들.</span><br /><br />Twitter, TikTok, Instagram, Tumblr, AO3 등 다양한 플랫폼의 크리에이터를 추천할 수 있습니다.',

@@ -5,16 +5,6 @@ const APPROVED_ENDPOINT = SUBMISSION_ENDPOINT ? `${SUBMISSION_ENDPOINT}?action=a
 const LANGUAGE_CODES = ["en", "es", "fr", "pt", "ja", "zh", "ko", "hi", "it", "id", "vi", "tl", "ar"];
 const RTL_LANGUAGES = new Set(["ar"]);
 
-const seedCreators = [
-  { id: crypto.randomUUID(), name: "Tekking101", platform: "Influencers", region: "https://www.youtube.com/@Tekking101", pitch: "Deep lore dives, chaotic energy, and years of consistent ZoNami coverage." },
-  { id: crypto.randomUUID(), name: "The Drawk Show", platform: "Influencers", region: "https://www.youtube.com/@TheDrawkShow", pitch: "Fast reactions, chapter discussion, and strong community engagement." },
-  { id: crypto.randomUUID(), name: "GrandLineReview", platform: "Writers", region: "https://www.youtube.com/@GrandLineReview", pitch: "Sharp editing, accessible breakdowns, and reliable series coverage." },
-  { id: crypto.randomUUID(), name: "Merphy Napier", platform: "Writers", region: "https://www.youtube.com/@MerphyNapier42", pitch: "Fresh-reader perspective with emotional analysis and thoughtful reactions." },
-  { id: crypto.randomUUID(), name: "Randy Troy", platform: "Influencers", region: "https://www.youtube.com/@RandyTroy", pitch: "Strong live discussions, theory talk, and event-level fandom energy." },
-  { id: crypto.randomUUID(), name: "King Recon", platform: "Illustrator", region: "https://www.youtube.com/@KingRecon", pitch: "Long-form chapter streams and veteran ZoNami community presence." }
-];
-
-
 const translations = window.VOTE_PAGE_LOCALES || {};
 
 for (const code of LANGUAGE_CODES) {
@@ -55,6 +45,7 @@ let showcaseTimerStarted = false;
 let activeCreatorFilter = "slideshow";
 let creatorPage = 0;
 let creatorSearchQuery = "";
+let creatorsLoading = Boolean(APPROVED_ENDPOINT);
 const CREATORS_PER_PAGE = 5;
 const RANDOM_CREATORS_PER_VIEW = 3;
 
@@ -172,7 +163,7 @@ function normalizeCreatorEntry(entry) {
 }
 
 function loadState() {
-  return { creators: seedCreators.map(normalizeCreatorEntry) };
+  return { creators: [] };
 }
 
 function saveState() {
@@ -313,7 +304,7 @@ function renderCreators() {
   if (!creators.length) {
     const emptyItem = document.createElement("li");
     emptyItem.className = "creator-card";
-    emptyItem.textContent = t("noCreators");
+    emptyItem.textContent = creatorsLoading ? t("loadingCreators") : t("noCreators");
     creatorGrid.appendChild(emptyItem);
   }
   renderCreatorPagination();
@@ -383,10 +374,15 @@ async function hydrateApprovedCreators() {
   if (!APPROVED_ENDPOINT) return;
   try {
     state.creators = await loadApprovedCreatorsFromBackend();
+    creatorsLoading = false;
     refreshShowcaseSelection();
     renderCounters();
     renderCreators();
-  } catch {}
+  } catch {
+    creatorsLoading = false;
+    renderCounters();
+    renderCreators();
+  }
 }
 
 function startShowcaseRotation() {
