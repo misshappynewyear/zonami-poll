@@ -343,6 +343,13 @@ a {
   text-align: center;
 }
 
+.creator-spotlight-copy {
+  margin: -0.25rem auto 1rem;
+  max-width: 44rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
 .entry-form {
   display: grid;
   gap: 0.9rem;

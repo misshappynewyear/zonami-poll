@@ -54,6 +54,8 @@ window.VOTE_PAGE_LOCALES.en = {
     suggestAgain: "Suggest Again",
     creatorRanking: "Creator Spotlight",
     suggestedCreators: "Featured Creators",
+    suggestionCreatorsDescription: "These are the approved creators so far. More will appear here as the mods review and approve new suggestions.",
+    voteCreatorsDescription: "These are all the creators you can vote for.",
     slideshow: "Random",
     artists: "Illustrators",
     influencers: "Influencers",
