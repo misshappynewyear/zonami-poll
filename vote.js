@@ -42,6 +42,7 @@ const nativeShareButton = document.getElementById("nativeShareButton");
 const feedbackMessage = document.getElementById("feedbackMessage");
 const creatorsKicker = document.getElementById("creatorsKicker");
 const creatorsTitle = document.getElementById("creatorsTitle");
+const creatorsDescription = document.getElementById("creatorsDescription");
 const creatorGrid = document.getElementById("creatorGrid");
 const creatorTemplate = document.getElementById("creatorCardTemplate");
 const creatorFilters = Array.from(document.querySelectorAll(".creator-filter"));
@@ -358,6 +359,7 @@ function renderLanguage() {
   voteShareBrandLink.textContent = t("brandServer");
   creatorsKicker.textContent = t("creatorRanking");
   creatorsTitle.textContent = t("suggestedCreators");
+  if (creatorsDescription) creatorsDescription.textContent = t("voteCreatorsDescription");
   creatorSearchInput.placeholder = "Search by creator, link, or recommendation";
 
   voteCategoryButtons.forEach((button) => {

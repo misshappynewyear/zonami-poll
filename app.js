@@ -33,6 +33,7 @@ const creatorPagination = document.getElementById("creatorPagination");
 const creatorPrevButton = document.getElementById("creatorPrevButton");
 const creatorNextButton = document.getElementById("creatorNextButton");
 const creatorPageStatus = document.getElementById("creatorPageStatus");
+const creatorsDescription = document.getElementById("creatorsDescription");
 const creatorSearchToggle = document.getElementById("creatorSearchToggle");
 const creatorSearchPanel = document.getElementById("creatorSearchPanel");
 const creatorSearchInput = document.getElementById("creatorSearchInput");
@@ -342,6 +343,7 @@ function applyTranslations() {
   phaseDescription.textContent = t("phaseDescription");
   actionLabel.textContent = t("heroCta");
   participateTitle.textContent = t("suggestedCreators");
+  if (creatorsDescription) creatorsDescription.textContent = t("suggestionCreatorsDescription");
   ruleList.innerHTML = "";
   ["rule1", "rule2", "rule3", "rule4"].forEach((key) => {
     const item = document.createElement("li");
