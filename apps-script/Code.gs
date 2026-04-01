@@ -447,7 +447,7 @@ function getApprovedCreators_() {
     });
   }
 
-  const values = sheet.getRange(2, 1, lastRow - 1, 5).getValues();
+  const values = sheet.getRange(2, 1, lastRow - 1, 6).getValues();
   const creators = values
     .filter((row) => row.some((cell) => String(cell || "").trim() !== ""))
     .map((row) => ({
@@ -456,6 +456,7 @@ function getApprovedCreators_() {
       category: cleanString_(row[2]),
       link: cleanString_(row[3]),
       reason: cleanString_(row[4]),
+      image_url: cleanString_(row[5], 1000),
     }));
 
   return jsonResponse_({

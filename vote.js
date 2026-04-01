@@ -184,14 +184,82 @@ function normalizeCategory(value) {
   return "Influencers";
 }
 
+function normalizeImageUrl(value) {
+  const normalized = String(value || "").trim();
+  return /^https?:\/\//i.test(normalized) ? normalized : "";
+}
+
+function getCreatorPlatform(link) {
+  const normalized = String(link || "").trim().toLowerCase();
+  if (!normalized) return "";
+  if (normalized.includes("archiveofourown.org")) return "ao3";
+  if (normalized.includes("twitter.com") || normalized.includes("x.com")) return "x";
+  return "";
+}
+
 function normalizeCreator(creator) {
   return {
     id: creator.id || creator.submission_id || crypto.randomUUID(),
     name: creator.name || creator.creator_name || "Unknown Creator",
     category: normalizeCategory(creator.category),
     link: creator.link || creator.region || "",
-    reason: creator.reason || creator.pitch || ""
+    reason: creator.reason || creator.pitch || "",
+    imageUrl: normalizeImageUrl(creator.image_url || creator.imageUrl)
   };
+}
+
+function renderCreatorArt(container, creator) {
+  if (!container) return;
+  container.dataset.category = creator.category;
+  container.dataset.theme = String(getThemeIndex(creator.name));
+  container.classList.toggle("has-image", Boolean(creator.imageUrl));
+  container.replaceChildren();
+
+  const appendInitials = () => {
+    container.classList.remove("has-image");
+    container.replaceChildren();
+    const initials = document.createElement("span");
+    initials.className = "vote-candidate-initials";
+    initials.textContent = getInitials(creator.name);
+    container.appendChild(initials);
+  };
+
+  if (creator.imageUrl) {
+    const image = document.createElement("img");
+    image.className = "vote-candidate-image";
+    image.src = creator.imageUrl;
+    image.alt = `${creator.name} profile`;
+    image.loading = "lazy";
+    image.addEventListener("error", appendInitials, { once: true });
+    container.appendChild(image);
+    return;
+  }
+
+  appendInitials();
+}
+
+function renderPlatformBadge(container, creator) {
+  if (!container) return;
+  const platform = getCreatorPlatform(creator.link);
+  container.className = "vote-candidate-platform";
+  container.textContent = "";
+  container.removeAttribute("title");
+
+  if (platform === "x") {
+    container.classList.add("is-x");
+    container.textContent = "X";
+    container.title = "X / Twitter";
+    return;
+  }
+
+  if (platform === "ao3") {
+    container.classList.add("is-ao3");
+    container.textContent = "AO3";
+    container.title = "Archive of Our Own";
+    return;
+  }
+
+  container.classList.add("is-hidden");
 }
 
 function sortedCreators() {
@@ -438,13 +506,13 @@ function renderCategoryView() {
     const fragment = voteCandidateTemplate.content.cloneNode(true);
     const button = fragment.querySelector(".vote-candidate-button");
     const art = fragment.querySelector(".vote-candidate-art");
-    const initials = fragment.querySelector(".vote-candidate-initials");
     const name = fragment.querySelector(".vote-candidate-name");
+    const platform = fragment.querySelector(".vote-candidate-platform");
+    const nameText = fragment.querySelector(".vote-candidate-name-text");
 
-    art.dataset.category = creator.category;
-    art.dataset.theme = String(getThemeIndex(creator.name));
-    initials.textContent = getInitials(creator.name);
-    name.textContent = creator.name;
+    renderCreatorArt(art, creator);
+    renderPlatformBadge(platform, creator);
+    nameText.textContent = creator.name;
     button.setAttribute("aria-label", creator.name);
     button.addEventListener("click", async () => {
       if (state.hasVotedToday || state.voteSubmitting) return;
