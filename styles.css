@@ -769,6 +769,13 @@ textarea {
   padding: 0;
   background: transparent;
   cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.vote-candidate-button:hover,
+.vote-candidate-button:focus-visible {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.14));
 }
 
 .vote-candidate-art {
@@ -884,14 +891,59 @@ textarea {
   color: rgba(17, 17, 17, 0.92);
 }
 
+.vote-candidate-art.has-image::before {
+  display: none;
+}
+
+.vote-candidate-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .vote-candidate-name {
   background: #111;
   color: #fff;
   padding: 0.9rem 0.5rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
   font-size: 1.05rem;
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.vote-candidate-name-text {
+  min-width: 0;
+}
+
+.vote-candidate-platform {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  flex: 0 0 auto;
+}
+
+.vote-candidate-platform.is-x {
+  background: #fff;
+  color: #111;
+}
+
+.vote-candidate-platform.is-ao3 {
+  background: #8b1711;
+  color: #fff;
 }
 
 .vote-result-view {
